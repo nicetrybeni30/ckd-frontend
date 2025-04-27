@@ -10,11 +10,11 @@
         <router-link v-if="userRole === 'admin'" to="/admin/model" class="hover:underline">Model Training</router-link>
 
         <!-- Patient Nav Links -->
-        <router-link v-if="userRole !== 'admin'" to="/dashboard" class="hover:underline">Dashboard</router-link>
-        <router-link v-if="userRole !== 'admin'" to="/predict" class="hover:underline">Predict</router-link>
+        <router-link v-if="userRole !== 'admin'" to="/patient/dashboard" class="hover:underline">Dashboard</router-link>
+        <router-link v-if="userRole !== 'admin'" to="/patient/predict" class="hover:underline">Predict</router-link>
 
-        <!-- Logout -->
-        <router-link to="/login" class="hover:underline">Logout</router-link>
+        <!-- Logout Button -->
+        <button @click="logout" class="hover:underline">Logout</button>
       </div>
     </div>
   </nav>
@@ -40,6 +40,19 @@ export default {
       this.userRole = res.data.role
     } catch (e) {
       this.userRole = null
+    }
+  },
+  methods: {
+    logout() {
+      localStorage.removeItem('token')
+      const role = this.userRole
+      this.userRole = null
+
+      if (role === 'admin') {
+        this.$router.push('/admin/login')
+      } else {
+        this.$router.push('/patient/login')
+      }
     }
   }
 }

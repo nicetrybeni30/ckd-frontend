@@ -51,25 +51,25 @@
 
       <div class="mt-10 flex flex-col md:flex-row gap-4">
         <router-link
-          to="/predict"
+          to="/patient/predict"
           class="inline-block bg-black text-white py-2 px-4 rounded hover:bg-gray-800 text-center"
         >
           Run Prediction →
         </router-link>
 
         <router-link
-          to="/edit"
+          to="/patient/edit"
           class="inline-block bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-900 text-center"
         >
           Edit My Stats ✏️
         </router-link>
-      </div>
+      </div> 
     </div>
   </div>
 </template>
 
 <script>
-import Navbar from '../components/Navbar.vue'
+import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
 
 export default {

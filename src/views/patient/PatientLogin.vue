@@ -40,8 +40,17 @@ export default {
           username: this.email,
           password: this.password
         })
-        localStorage.setItem('token', response.data.access)
-        this.$router.push('/dashboard')
+
+        const token = response.data.access
+        localStorage.setItem('token', token)
+
+        // Simple redirect logic based on email
+        if (this.email === 'admin@example.com') {
+          this.$router.push('/admin/dashboard')
+        } else {
+          this.$router.push('/patient/dashboard')
+        }
+
       } catch (err) {
         this.error = 'Invalid username or password.'
       }
