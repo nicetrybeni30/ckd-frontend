@@ -1,6 +1,7 @@
 <template>
-  <div class="min-h-screen p-6 bg-gray-100">
-    <div class="max-w-6xl mx-auto">
+  <div class="min-h-screen bg-gray-100">
+    <Navbar />
+    <div class="p-6 max-w-6xl mx-auto">
       <h1 class="text-3xl font-bold mb-6">Patients Management</h1>
 
       <div class="mb-4">
@@ -40,9 +41,13 @@
 
       <!-- Pagination Controls -->
       <div class="mt-4 flex justify-between items-center text-sm">
-        <button @click="prevPage" :disabled="page === 1" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Previous</button>
+        <button @click="prevPage" :disabled="page === 1" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">
+          Previous
+        </button>
         <span>Page {{ page }} of {{ totalPages }}</span>
-        <button @click="nextPage" :disabled="page >= totalPages" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">Next</button>
+        <button @click="nextPage" :disabled="page >= totalPages" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">
+          Next
+        </button>
       </div>
 
       <!-- Delete Confirmation Modal -->
@@ -93,9 +98,13 @@
 </template>
 
 <script>
+import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
 
 export default {
+  components: {
+    Navbar
+  },
   data() {
     return {
       users: [],
@@ -105,7 +114,7 @@ export default {
       showModal: false,
       userToDelete: null,
       showEditModal: false,
-      selectedUser: {} // for modal editing
+      selectedUser: {}
     }
   },
   computed: {
@@ -174,7 +183,7 @@ export default {
     async updateUser() {
       try {
         const payload = { ...this.selectedUser }
-        if (!payload.new_password) delete payload.new_password // don't send empty password
+        if (!payload.new_password) delete payload.new_password
 
         await axios.put(`http://localhost:8000/api/users/${this.selectedUser.id}/`, payload, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }

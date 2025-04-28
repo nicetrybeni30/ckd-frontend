@@ -1,55 +1,61 @@
 <template>
-  <div class="min-h-screen bg-gray-100 p-6">
-    <div class="max-w-6xl mx-auto">
-      <Navbar />
+  <div class="min-h-screen bg-gray-100 relative">
+    <Navbar />
+    <div class="p-6 max-w-6xl mx-auto">
 
       <h1 class="text-3xl font-bold mb-6 text-gray-800">Dashboard</h1>
 
+      <!-- Toast on Top -->
+      <div
+        v-if="showToast"
+        class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-2 rounded shadow-lg z-50 animate-bounce"
+      >
+        🎉 Profile completed successfully!
+      </div>
+
+      <!-- User Info -->
       <div v-if="userInfo" class="mb-6 bg-white p-4 rounded shadow text-sm text-gray-600">
         <p><strong>Username:</strong> {{ userInfo.username }}</p>
         <p><strong>Email:</strong> {{ userInfo.email }}</p>
         <p><strong>Role:</strong> {{ userInfo.role }}</p>
       </div>
 
-      <!-- Admin Stats -->
-      <div v-if="userInfo?.role === 'admin'" class="grid gap-6 md:grid-cols-3">
-        <div class="bg-white shadow rounded-xl p-6 text-center">
-          <p class="text-sm text-gray-500">Total Patients</p>
-          <h2 class="text-2xl font-bold text-blue-600">120</h2>
-        </div>
-        <div class="bg-white shadow rounded-xl p-6 text-center">
-          <p class="text-sm text-gray-500">High Risk Cases</p>
-          <h2 class="text-2xl font-bold text-red-500">18</h2>
-        </div>
-        <div class="bg-white shadow rounded-xl p-6 text-center">
-          <p class="text-sm text-gray-500">Model Accuracy</p>
-          <h2 class="text-2xl font-bold text-green-600">94%</h2>
-        </div>
-      </div>
-
       <!-- Patient Stats -->
-      <div v-else-if="userInfo?.role === 'patient'" class="grid gap-6 md:grid-cols-3">
+      <div v-if="userInfo?.role === 'patient' && patientData" class="grid gap-6 md:grid-cols-3">
         <div class="bg-white shadow rounded-xl p-6 text-center">
           <p class="text-sm text-gray-500">🕒 Last Predicted</p>
           <h2 class="text-md font-semibold text-gray-600">
-            {{ patientData?.last_predicted_at ? formatDate(patientData.last_predicted_at) : 'N/A' }}
+            {{ patientData.last_predicted_at ? formatDate(patientData.last_predicted_at) : 'N/A' }}
           </h2>
         </div>
         <div class="bg-white shadow rounded-xl p-6 text-center">
           <p class="text-sm text-gray-500">📋 Recommendation</p>
           <h2 class="text-md font-semibold text-gray-700">
-            {{ patientData?.last_recommendation || 'No data yet' }}
+            {{ patientData.last_recommendation || 'No data yet' }}
           </h2>
         </div>
         <div class="bg-white shadow rounded-xl p-6 text-center">
           <p class="text-sm text-gray-500">🎯 Confidence</p>
           <h2 class="text-2xl font-bold text-green-600">
-            {{ patientData?.last_confidence?.toFixed(2) || '0.00' }}%
+            {{ patientData.last_confidence?.toFixed(2) || '0.00' }}%
           </h2>
         </div>
       </div>
 
-      <div class="mt-10 flex flex-col md:flex-row gap-4">
+      <div v-else-if="userInfo?.role === 'patient'" class="text-center mt-10">
+        <p class="text-lg font-semibold text-red-500 mb-4">
+          ⚠️ No health profile found. Please complete your health profile.
+        </p>
+        <router-link
+          to="/patient/complete-profile"
+          class="inline-block bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 text-center"
+        >
+          Complete Profile Now →
+        </router-link>
+      </div>
+
+      <!-- Actions -->
+      <div v-if="userInfo?.role === 'patient' && patientData" class="mt-10 flex flex-col md:flex-row gap-4 justify-center">
         <router-link
           to="/patient/predict"
           class="inline-block bg-black text-white py-2 px-4 rounded hover:bg-gray-800 text-center"
@@ -63,7 +69,8 @@
         >
           Edit My Stats ✏️
         </router-link>
-      </div> 
+      </div>
+
     </div>
   </div>
 </template>
@@ -73,13 +80,12 @@ import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
 
 export default {
-  components: {
-    Navbar
-  },
+  components: { Navbar },
   data() {
     return {
       userInfo: null,
-      patientData: null
+      patientData: null,
+      showToast: false
     }
   },
   async mounted() {
@@ -91,13 +97,26 @@ export default {
       this.userInfo = userRes.data
 
       if (this.userInfo.role === 'patient') {
-        const recordRes = await axios.get('http://localhost:8000/api/records/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        this.patientData = recordRes.data
+        try {
+          const recordRes = await axios.get('http://localhost:8000/api/records/me', {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          this.patientData = recordRes.data
+        } catch (err) {
+          console.warn("No patient record found yet.")
+          this.patientData = null
+        }
       }
     } catch (error) {
       console.error("Failed to load dashboard data:", error)
+    }
+
+    // Detect if coming from complete-profile
+    if (this.$route.query.from === 'complete-profile') {
+      this.showToast = true
+      setTimeout(() => {
+        this.showToast = false
+      }, 2000)
     }
   },
   methods: {
@@ -115,3 +134,6 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+</style>
