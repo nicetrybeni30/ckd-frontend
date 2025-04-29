@@ -15,7 +15,7 @@ import AdminDashboard from '@/views/admin/AdminDashboard.vue'
 import AdminPatients from '@/views/admin/AdminPatients.vue'
 import AdminModel from '@/views/admin/AdminModel.vue'
 import AdminPatientRecords from '@/views/admin/AdminPatientRecords.vue'
-
+import AdminLogin from '@/views/admin/AdminLogin.vue'
 const routes = [
   { path: '/', redirect: '/patient/login' },
 
@@ -28,6 +28,7 @@ const routes = [
   { path: '/patient/account', component: PatientAccount },
   { path: '/patient/complete-profile', component: PatientCompleteProfile },
 
+  { path: '/admin/login', component: AdminLogin },
   { path: '/admin/dashboard', component: AdminDashboard },
   { path: '/admin/patients', component: AdminPatients },
   { path: '/admin/model', component: AdminModel },

@@ -6,12 +6,12 @@
       <form @submit.prevent="login">
         <div class="mb-4">
           <label class="block mb-1 text-sm font-medium text-gray-700">Username</label>
-          <input v-model="username" type="text" class="w-full p-2 border rounded" required />
+          <input v-model="username" type="text" class="w-full p-2 border rounded" placeholder="Enter your username" required />
         </div>
 
         <div class="mb-6">
           <label class="block mb-1 text-sm font-medium text-gray-700">Password</label>
-          <input v-model="password" type="password" class="w-full p-2 border rounded" required />
+          <input v-model="password" type="password" class="w-full p-2 border rounded" placeholder="Enter your password" required />
         </div>
 
         <button type="submit" class="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600">

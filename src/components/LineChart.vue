@@ -1,43 +1,69 @@
 <template>
-    <div class="bg-white p-4 rounded shadow">
-      <canvas ref="lineChart"></canvas>
-    </div>
-  </template>
-  
-  <script>
-  import { Chart, registerables } from 'chart.js'
-  Chart.register(...registerables)
-  
-  export default {
-    name: 'LineChart',
-    mounted() {
-      new Chart(this.$refs.lineChart, {
-        type: 'line',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-          datasets: [{
-            label: 'Accuracy (%)',
-            data: [85, 88, 90, 92, 94],
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: 100
-            }
+  <div class="bg-white p-4 rounded shadow">
+    <canvas v-if="canvasReady" ref="lineChart"></canvas> <!-- 🆕 Only render if canvas is ready -->
+  </div>
+</template>
+
+<script>
+import { Chart, registerables } from 'chart.js'
+Chart.register(...registerables)
+
+export default {
+  name: 'LineChart',
+  props: {
+    chartData: {
+      type: Object,
+      required: true
+    },
+    chartOptions: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      chartInstance: null,
+      canvasReady: false  // 🆕
+    }
+  },
+  mounted() {
+    this.canvasReady = true  // 🆕 after mount
+  },
+  watch: {
+    chartData: {
+      handler() {
+        if (this.canvasReady) {
+          if (this.chartInstance) {
+            this.chartInstance.data = this.chartData
+            this.chartInstance.options = this.chartOptions
+            this.chartInstance.update()
+          } else {
+            this.renderChart()
           }
         }
-      })
+      },
+      deep: true,
+      immediate: true
+    }
+  },
+  beforeUnmount() {
+    if (this.chartInstance) {
+      this.chartInstance.destroy()
+    }
+  },
+  methods: {
+    renderChart() {
+      if (this.$refs.lineChart) {
+        this.chartInstance = new Chart(this.$refs.lineChart, {
+          type: 'line',
+          data: this.chartData,
+          options: this.chartOptions
+        })
+      }
     }
   }
-  </script>
-  
+}
+</script>
+
+<style scoped>
+</style>
