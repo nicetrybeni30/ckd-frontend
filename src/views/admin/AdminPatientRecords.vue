@@ -67,7 +67,11 @@
               <td class="p-3">{{ user.record?.ane }}</td>
               <td class="p-3">{{ user.record?.ckd_stage }}</td>
               <td class="p-3">
-                <button @click="openRecordModal(user)" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">
+                <button
+                  @click="openRecordModal(user)"
+                  class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  :disabled="!user.record"
+                >
                   Edit Record
                 </button>
               </td>
@@ -92,6 +96,45 @@
         <span>{{ errorMessage }}</span>
         <button @click="showErrorToast = false" class="font-bold">×</button>
       </div>
+
+      <!-- Edit Modal -->
+      <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div class="bg-white p-8 rounded-xl shadow-lg max-w-3xl w-full overflow-y-auto max-h-[90vh]">
+          <h2 class="text-2xl font-bold mb-6 text-center">Edit Patient Record</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div v-for="(value, key) in editableRecord" :key="key">
+              <template v-if="key !== 'id' && key !== 'user'">
+                <label class="block mb-1 text-sm font-medium text-gray-700">{{ formatFullLabel(key) }}</label>
+                <input
+                  v-model="editableRecord[key]"
+                  type="text"
+                  class="w-full border px-3 py-2 rounded"
+                  :class="{ 'border-red-500': errors[key] }"
+                />
+                <p v-if="errors[key]" class="text-red-500 text-xs mt-1">{{ errors[key] }}</p>
+              </template>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-4 mt-8">
+            <button
+              @click="showModal = false"
+              class="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              @click="updateRecord"
+              :disabled="saving"
+              class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              {{ saving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -114,7 +157,8 @@ export default {
       showSuccessToast: false,
       showErrorToast: false,
       successMessage: '',
-      errorMessage: ''
+      errorMessage: '',
+      errors: {}
     }
   },
   computed: {
@@ -124,20 +168,41 @@ export default {
     paginatedUsers() {
       const start = (this.page - 1) * this.perPage
       return this.users.slice(start, start + this.perPage)
-    },
-    filteredEditableRecord() {
-      const filtered = { ...this.editableRecord }
-      delete filtered.id
-      delete filtered.user
-      return filtered
     }
   },
   async mounted() {
     await this.fetchUsers()
   },
   methods: {
-    formatLabel(key) {
-      return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+    formatFullLabel(key) {
+      const mapping = {
+        age: "Age",
+        bp: "Blood Pressure",
+        sg: "Specific Gravity",
+        al: "Albumin",
+        su: "Sugar",
+        rbc: "Red Blood Cells",
+        pc: "Pus Cell",
+        pcc: "Pus Cell Clumps",
+        ba: "Bacteria",
+        bgr: "Blood Glucose Random",
+        bu: "Blood Urea",
+        sc: "Serum Creatinine",
+        sod: "Sodium",
+        pot: "Potassium",
+        hemo: "Hemoglobin",
+        pcv: "Packed Cell Volume",
+        wc: "White Blood Cell Count",
+        rc: "Red Blood Cell Count",
+        htn: "Hypertension",
+        dm: "Diabetes Mellitus",
+        cad: "Coronary Artery Disease",
+        appet: "Appetite",
+        pe: "Pedal Edema",
+        ane: "Anemia",
+        ckd_stage: "CKD Stage",
+      }
+      return mapping[key] || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
     },
     prevPage() {
       if (this.page > 1) this.page--
@@ -147,34 +212,15 @@ export default {
     },
     async fetchUsers() {
       try {
-        const res = await axios.get('http://localhost:8000/api/users/', {
+        const res = await axios.get('http://localhost:8000/api/users-with-records/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
-        this.users = res.data.filter(u => u.role === 'patient')
-
-        for (const user of this.users) {
-          try {
-            const recordRes = await axios.get(`http://localhost:8000/api/records/${user.id}/`, {
-              headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-            })
-            user.record = recordRes.data
-          } catch (err) {
-            if (err.response && err.response.status === 401) {
-              console.warn('🔒 Unauthorized while fetching record, user probably logged out.')
-              return
-            }
-            user.record = null
-          }
-        }
+        this.users = res.data
       } catch (error) {
-        if (error.response && error.response.status === 401) {
-          console.warn('🔒 Unauthorized while fetching users.')
-          return
-        }
-        console.error('Failed to fetch users:', error)
+        console.error('Failed to fetch users with records:', error)
       }
     },
-    async openRecordModal(user) {
+    openRecordModal(user) {
       if (!user.record) {
         this.showErrorToast = true
         this.errorMessage = "This patient has no record yet."
@@ -183,9 +229,20 @@ export default {
       }
       this.selectedUser = user
       this.editableRecord = { ...user.record }
+      this.errors = {}
       this.showModal = true
     },
     async updateRecord() {
+      this.errors = {}
+      for (const [key, value] of Object.entries(this.editableRecord)) {
+        if ((value === '' || value === null) && key !== 'id' && key !== 'user') {
+          this.errors[key] = `${this.formatFullLabel(key)} is required`
+        }
+      }
+      if (Object.keys(this.errors).length > 0) {
+        return
+      }
+
       this.saving = true
       try {
         await axios.put(`http://localhost:8000/api/records/${this.selectedUser.id}/`, this.editableRecord, {
