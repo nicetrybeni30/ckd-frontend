@@ -65,23 +65,36 @@ export default {
           username: this.username,
           password: this.password
         })
-        localStorage.setItem('token', res.data.access)
 
-        // 🎉 Show success toast
-        this.showToast = true;
+        const token = res.data.access
+        localStorage.setItem('token', token)
 
+        // 🔐 Block admin logins silently
+        const me = await axios.get('http://localhost:8000/api/patient/me/', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+
+        if (me.data.role !== 'patient') {
+          localStorage.removeItem('token')
+          throw new Error('unauthorized_role')
+        }
+
+        // ✅ Valid patient login
+        this.showToast = true
         setTimeout(() => {
           this.showToast = false
-          this.$router.push('/patient/dashboard')  // 🚀 Redirect after toast
+          this.$router.push('/patient/dashboard')
         }, 2000)
 
       } catch (err) {
         console.error('Login failed:', err)
-        this.showError = true;
-        if (err.response && err.response.status === 401) {
-          this.errorMessage = 'Invalid username or password.';
+        this.showError = true
+        if (err.message === 'unauthorized_role') {
+          this.errorMessage = 'Invalid username or password.'
+        } else if (err.response?.status === 401) {
+          this.errorMessage = 'Invalid username or password.'
         } else {
-          this.errorMessage = 'An unexpected error occurred. Please try again.';
+          this.errorMessage = 'An unexpected error occurred. Please try again.'
         }
       }
     }

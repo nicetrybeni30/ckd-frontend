@@ -7,9 +7,10 @@
       <div v-if="form">
         <form @submit.prevent="confirmSave" class="space-y-4">
           <div v-for="([key, value], index) in filteredFormEntries" :key="index">
-            <label class="block text-sm font-medium text-gray-600 capitalize mb-1">{{ beautifyLabel(key) }}</label>
+            <label class="block text-sm font-medium text-gray-700 capitalize mb-1">{{ beautifyLabel(key) }}</label>
 
-            <select v-if="dropdownFields.includes(key)" v-model="form[key]" class="w-full border px-3 py-2 rounded">
+            <select v-if="dropdownFields.includes(key)" v-model="form[key]" class="w-full border px-3 py-2 rounded" required>
+              <option disabled value="">Select...</option>
               <option v-for="option in dropdownOptions[key]" :key="option" :value="option">
                 {{ option }}
               </option>
@@ -17,14 +18,15 @@
 
             <input
               v-else
-              v-model="form[key]"
-              :type="typeof value === 'number' ? 'number' : 'text'"
+              v-model.number="form[key]"
+              :type="fieldTypes[key] || 'number'"
+              :step="decimalFields.includes(key) ? 'any' : '1'"
               class="w-full border px-3 py-2 rounded"
               :placeholder="beautifyLabel(key)"
+              required
             />
           </div>
 
-          <!-- Buttons: Back + Save -->
           <div class="flex gap-4 mt-6">
             <BackButton />
             <button type="submit" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">
@@ -36,7 +38,7 @@
         </form>
       </div>
 
-      <!-- Confirmation Modal -->
+      <!-- Confirm Modal -->
       <div v-if="showConfirm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
         <div class="bg-white p-6 rounded shadow text-center">
           <h2 class="text-xl mb-4">Are you sure you want to save changes?</h2>
@@ -57,8 +59,8 @@
         </div>
       </div>
 
-      <!-- Toast Notification -->
-      <div v-if="showToast" class="fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow transition-all duration-300 z-50">
+      <!-- Toast -->
+      <div v-if="showToast" class="fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow">
         {{ message }}
       </div>
     </div>
@@ -100,7 +102,13 @@ export default {
         appet: ['good', 'poor'],
         rbc: ['normal', 'abnormal'],
         pc: ['normal', 'abnormal']
-      }
+      },
+      fieldTypes: {
+        age: 'number', bp: 'number', sg: 'number', al: 'number', su: 'number',
+        bgr: 'number', bu: 'number', sc: 'number', sod: 'number', pot: 'number',
+        hemo: 'number', pcv: 'number', wc: 'number', rc: 'number'
+      },
+      decimalFields: ['sg', 'sc', 'pot', 'rc', 'hemo', 'bgr', 'bu', 'sod', 'pcv', 'wc']
     }
   },
   computed: {
@@ -116,7 +124,6 @@ export default {
         headers: { Authorization: `Bearer ${token}` }
       })
       this.isAdmin = me.data.role === 'admin'
-
       if (this.isAdmin) {
         const res = await axios.get('http://localhost:8000/api/users/', {
           headers: { Authorization: `Bearer ${token}` }
@@ -130,8 +137,17 @@ export default {
     }
   },
   methods: {
-    beautifyLabel(key) {
-      return key.replace('_', ' ').toUpperCase()
+    beautifyLabel(field) {
+      const customNames = {
+        bp: 'Blood Pressure (BP)', sg: 'Specific Gravity (SG)', al: 'Albumin (AL)', su: 'Sugar (SU)',
+        rbc: 'Red Blood Cells (RBC)', pc: 'Pus Cells (PC)', pcc: 'Pus Cell Clumps (PCC)', ba: 'Bacteria (BA)',
+        bgr: 'Blood Glucose Random (BGR)', bu: 'Blood Urea (BU)', sc: 'Serum Creatinine (SC)', sod: 'Sodium (SOD)',
+        pot: 'Potassium (POT)', hemo: 'Hemoglobin (HEMO)', pcv: 'Packed Cell Volume (PCV)',
+        wc: 'White Blood Cell Count (WC)', rc: 'Red Blood Cell Count (RC)', htn: 'Hypertension (HTN)',
+        dm: 'Diabetes Mellitus (DM)', cad: 'Coronary Artery Disease (CAD)', appet: 'Appetite',
+        pe: 'Pedal Edema (PE)', ane: 'Anemia (ANE)', smoker: 'Smoking Status'
+      }
+      return customNames[field] || field.replace('_', ' ').toUpperCase()
     },
     async fetchStats() {
       const token = localStorage.getItem('token')
@@ -157,9 +173,24 @@ export default {
       const token = localStorage.getItem('token')
       try {
         const payload = {}
-        for (const [key, value] of Object.entries(this.form)) {
+        for (const [key, value] of Object.entries(this.originalForm)) {
           if (!this.nonEditableFields.includes(key)) {
-            payload[key] = value
+            payload[key] = this.form[key] !== '' ? this.form[key] : null
+          }
+        }
+
+        payload.user = this.originalForm.user || null
+        payload.classification = this.originalForm.classification || 'notckd'
+        payload.ckd_stage = this.originalForm.ckd_stage || 'none'
+
+        for (const field of this.dropdownFields) {
+          if (!payload[field]) {
+            this.message = `Please select a value for ${this.beautifyLabel(field)}`
+            this.showConfirm = false
+            this.showSuccessModal = true
+            this.showToast = true
+            setTimeout(() => { this.showToast = false }, 2000)
+            return
           }
         }
 
@@ -176,7 +207,8 @@ export default {
           return
         }
 
-        await axios.post('http://localhost:8000/api/records/', payload, {
+        console.log("Submitting payload:", payload)
+        await axios.put('http://localhost:8000/api/records/me/', payload, {
           headers: { Authorization: `Bearer ${token}` }
         })
 
@@ -203,5 +235,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

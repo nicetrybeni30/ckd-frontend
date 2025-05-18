@@ -3,15 +3,16 @@
     <Navbar />
     <div class="p-6 max-w-3xl mx-auto">
       <h1 class="text-2xl font-bold mb-6 text-center">Create Your Health Record</h1>
-      
+
       <BackButton />
 
       <form @submit.prevent="submitRecord" class="space-y-4 mt-6">
         <div v-for="field in fields" :key="field.name">
           <label class="block mb-1 capitalize text-gray-700">{{ field.label }}</label>
           <input
-            v-model="form[field.name]"
+            v-model.number="form[field.name]"
             :type="field.type"
+            :step="decimalFields.includes(field.name) ? 'any' : '1'"
             class="w-full p-2 border rounded"
             :placeholder="field.label"
             required
@@ -23,17 +24,13 @@
         </button>
       </form>
 
-      <!-- Error Modal (Optional if submit fails) -->
       <div v-if="showError" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
         <div class="bg-white p-6 rounded shadow text-center">
           <h2 class="text-xl font-bold text-red-600 mb-4">❌ Record Creation Failed</h2>
           <p class="text-gray-700 mb-4">Something went wrong while saving. Please try again.</p>
-          <button @click="showError = false" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-            OK
-          </button>
+          <button @click="showError = false" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">OK</button>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -62,6 +59,7 @@ export default {
         { name: 'htn', label: 'Hypertension', type: 'text' },
         { name: 'dm', label: 'Diabetes Mellitus', type: 'text' }
       ],
+      decimalFields: ['sg', 'sc', 'hemo', 'bgr', 'bu', 'pcv'],
       showError: false
     }
   },
@@ -82,5 +80,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
