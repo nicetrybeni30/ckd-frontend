@@ -128,7 +128,7 @@ export default {
           return
         }
 
-        const response = await axios.post('http://localhost:8000/api/records/', this.form, {
+        const response = await axios.put('http://localhost:8000/api/records/me/', this.form, {
           headers: { Authorization: `Bearer ${token}` }
         })
 
