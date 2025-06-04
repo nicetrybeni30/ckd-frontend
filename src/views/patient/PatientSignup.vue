@@ -26,7 +26,7 @@
           </button>
   
           <p v-if="error" class="text-red-500 text-sm text-center mt-4">{{ error }}</p>
-          <p v-if="success" class="text-green-500 text-sm text-center mt-4">✅ Account created! Redirecting...</p>
+          <p v-if="success" class="text-green-500 text-sm text-center mt-4"> Account created! Redirecting...</p>
         </form>
       </div>
     </div>

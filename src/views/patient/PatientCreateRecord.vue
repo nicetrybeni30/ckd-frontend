@@ -26,7 +26,7 @@
 
       <div v-if="showError" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
         <div class="bg-white p-6 rounded shadow text-center">
-          <h2 class="text-xl font-bold text-red-600 mb-4">❌ Record Creation Failed</h2>
+          <h2 class="text-xl font-bold text-red-600 mb-4"> Record Creation Failed</h2>
           <p class="text-gray-700 mb-4">Something went wrong while saving. Please try again.</p>
           <button @click="showError = false" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">OK</button>
         </div>

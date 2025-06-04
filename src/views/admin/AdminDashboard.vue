@@ -108,7 +108,7 @@ export default {
         this.modelAccuracy = modelRes.data.model_accuracy || 'N/A'
         this.lastRetrained = modelRes.data.retrained_at || 'N/A'
       } catch (err) {
-        console.error('❌ Failed to fetch dashboard data:', err)
+        console.error(' Failed to fetch dashboard data:', err)
       }
     },
     async fetchRetrainHistory() {
@@ -124,7 +124,7 @@ export default {
         this.lineChartData.labels = labels
         this.lineChartData.datasets[0].data = data
       } catch (err) {
-        console.error('❌ Failed to fetch retrain history:', err)
+        console.error(' Failed to fetch retrain history:', err)
       }
     },
     async fetchCKDDistribution() {   // 🆕
@@ -140,7 +140,7 @@ export default {
         this.barChartData.labels = labels
         this.barChartData.datasets[0].data = counts
       } catch (err) {
-        console.error('❌ Failed to fetch CKD distribution:', err)
+        console.error(' Failed to fetch CKD distribution:', err)
       }
     }
   }

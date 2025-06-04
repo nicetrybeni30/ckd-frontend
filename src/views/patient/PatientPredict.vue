@@ -26,9 +26,9 @@
 
           <div class="bg-gray-50 p-6 rounded border mb-8">
             <p class="text-lg font-semibold text-gray-700 mb-2">🔍 Model Insights:</p>
-            <p class="text-sm"><strong>🧠 Model Accuracy:</strong> {{ result.model_accuracy }}%</p>
-            <p class="text-sm"><strong>🎯 Confidence:</strong> {{ result.confidence }}%</p>
-            <p class="text-sm"><strong>📅 Last Retrained:</strong> {{ result.retrained_at }}</p>
+            <p class="text-sm"><strong> Model Accuracy:</strong> {{ result.model_accuracy }}%</p>
+            <p class="text-sm"><strong> Confidence:</strong> {{ result.confidence }}%</p>
+            <p class="text-sm"><strong> Last Retrained:</strong> {{ result.retrained_at }}</p>
           </div>
 
           <div v-if="result.risk_flags && result.risk_flags.length" class="bg-red-50 p-6 rounded border border-red-300 mb-6">
@@ -41,13 +41,13 @@
           <div class="flex justify-center gap-4 mt-8">
             <BackButton />
             <button @click="refreshPrediction" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              🔄 Run Again
+               Run Again
             </button>
           </div>
         </div>
 
         <div v-if="showToast" class="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2 rounded shadow-lg animate-bounce">
-          ✅ Prediction Updated!
+          Prediction Updated!
         </div>
 
       </div>

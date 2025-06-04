@@ -10,7 +10,7 @@
         v-if="showToast"
         class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-2 rounded shadow-lg z-50 animate-bounce"
       >
-        🎉 Profile completed successfully!
+         Profile completed successfully!
       </div>
 
       <!-- User Info -->
@@ -23,19 +23,19 @@
       <!-- Patient Stats -->
       <div v-if="userInfo?.role === 'patient' && patientData" class="grid gap-6 md:grid-cols-3">
         <div class="bg-white shadow rounded-xl p-6 text-center">
-          <p class="text-sm text-gray-500">🕒 Last Predicted</p>
+          <p class="text-sm text-gray-500"> Last Predicted</p>
           <h2 class="text-md font-semibold text-gray-600">
             {{ patientData.last_predicted_at ? formatDate(patientData.last_predicted_at) : 'N/A' }}
           </h2>
         </div>
         <div class="bg-white shadow rounded-xl p-6 text-center">
-          <p class="text-sm text-gray-500">📋 Recommendation</p>
+          <p class="text-sm text-gray-500"> Recommendation</p>
           <h2 class="text-md font-semibold text-gray-700">
             {{ patientData.last_recommendation || 'No data yet' }}
           </h2>
         </div>
         <div class="bg-white shadow rounded-xl p-6 text-center">
-          <p class="text-sm text-gray-500">🎯 Confidence</p>
+          <p class="text-sm text-gray-500"> Confidence</p>
           <h2 class="text-2xl font-bold text-green-600">
             {{ patientData.last_confidence?.toFixed(2) || '0.00' }}%
           </h2>
@@ -44,7 +44,7 @@
 
       <div v-else-if="userInfo?.role === 'patient'" class="text-center mt-10">
         <p class="text-lg font-semibold text-red-500 mb-4">
-          ⚠️ No health profile found. Please complete your health profile.
+           No health profile found. Please complete your health profile.
         </p>
         <router-link
           to="/patient/complete-profile"
@@ -67,7 +67,7 @@
           to="/patient/edit"
           class="inline-block bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-900 text-center"
         >
-          Edit My Stats ✏️
+          Edit My Stats 
         </router-link>
       </div>
 

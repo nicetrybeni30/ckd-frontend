@@ -35,7 +35,7 @@
       <!-- Success Modal -->
       <div v-if="showSuccessModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
         <div class="bg-white p-6 rounded shadow text-center">
-          <h2 class="text-xl font-bold text-green-600 mb-4">✅ Profile Completed Successfully!</h2>
+          <h2 class="text-xl font-bold text-green-600 mb-4"> Profile Completed Successfully!</h2>
           <p class="text-gray-600 mb-4">You will now be redirected to dashboard.</p>
           <button @click="redirectToDashboard" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
             OK
@@ -46,7 +46,7 @@
       <!-- Error Modal -->
       <div v-if="showErrorModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
         <div class="bg-white p-6 rounded shadow text-center">
-          <h2 class="text-xl font-bold text-red-600 mb-4">❌ Error Submitting</h2>
+          <h2 class="text-xl font-bold text-red-600 mb-4"> Error Submitting</h2>
           <p class="text-gray-700 mb-4">{{ errorMessage }}</p>
           <button @click="showErrorModal = false" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">
             OK
@@ -132,10 +132,10 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         })
 
-        console.log('✅ Successfully submitted:', response.data)
+        console.log(' Successfully submitted:', response.data)
         this.showSuccessModal = true
       } catch (error) {
-        console.error('❌ Failed to complete profile', error)
+        console.error(' Failed to complete profile', error)
         this.showErrorModal = true
         if (error.response?.status === 400) {
           this.errorMessage = "⚠️ Please fill out all fields correctly."

@@ -29,7 +29,7 @@
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
             </svg>
-            {{ isRetraining ? 'Retraining...' : 'Retrain Model 🔁' }}
+            {{ isRetraining ? 'Retraining...' : 'Retrain Model ' }}
           </button>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default {
       } catch (e) {
         this.modelAccuracy = 'N/A'
         this.retrainedAt = 'Unknown'
-        this.log += '⚠️ Failed to fetch model info.\n'
+        this.log += ' Failed to fetch model info.\n'
       }
     },
     async startRetrain() {
@@ -98,7 +98,7 @@ export default {
       this.isRetraining = true
       this.progressPercent = 0
       this.secondsLeft = 0
-      this.log = '⏳ Starting model retraining...\n'
+      this.log = ' Starting model retraining...\n'
 
       this.$nextTick(() => {
         const el = document.getElementById('progressBar')
@@ -119,12 +119,12 @@ export default {
           if (this.isRetraining) {
             clearInterval(this.interval)
             this.isRetraining = false
-            this.log += '⚠️ Training timed out after 10 minutes.\n'
-            alert('⚠️ Training took too long and was auto-stopped.')
+            this.log += ' Training timed out after 10 minutes.\n'
+            alert(' Training took too long and was auto-stopped.')
           }
         }, 600000) // 10 mins max
       } catch (err) {
-        this.log += '❌ Failed to trigger retraining.\n'
+        this.log += ' Failed to trigger retraining.\n'
         this.isRetraining = false
       }
     },
@@ -144,7 +144,7 @@ export default {
           this.progressPercent = Math.min(data.percent, 99.9)
         }
         this.secondsLeft = data.seconds_left
-        this.log = `🧠 Training in progress... (${data.percent.toFixed(1)}%)\n`
+        this.log = ` Training in progress... (${data.percent.toFixed(1)}%)\n`
 
         // Backend might already be done, so fake delay final jump
         if (data.percent >= 100 && !this.fakeFinalDelay) {
@@ -155,7 +155,7 @@ export default {
             clearTimeout(this.timeoutId)
             this.isRetraining = false
             this.fakeFinalDelay = false
-            this.log = `✅ Model retraining complete at ${new Date().toLocaleString()}\n`
+            this.log = ` Model retraining complete at ${new Date().toLocaleString()}\n`
             await this.fetchModelInfo()
           }, 1500) // 1.5s realistic final delay
         }
@@ -163,7 +163,7 @@ export default {
         clearInterval(this.interval)
         clearTimeout(this.timeoutId)
         this.isRetraining = false
-        this.log += `❌ Error polling progress: ${err.message}\n`
+        this.log += ` Error polling progress: ${err.message}\n`
       }
     }
   },

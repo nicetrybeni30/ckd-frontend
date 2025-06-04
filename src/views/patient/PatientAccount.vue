@@ -35,11 +35,11 @@
 
     <!-- Toasts -->
     <div v-if="showSuccessToast" class="fixed bottom-6 right-6 bg-green-500 text-white px-4 py-2 rounded shadow-lg animate-bounce">
-      ✅ Profile Updated Successfully!
+       Profile Updated Successfully!
     </div>
 
     <div v-if="showErrorToast" class="fixed bottom-6 right-6 bg-red-500 text-white px-4 py-2 rounded shadow-lg animate-bounce">
-      ❌ Failed to Update Profile!
+       Failed to Update Profile!
     </div>
   </div>
 </template>

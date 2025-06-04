@@ -27,10 +27,10 @@
       </div>
     </div>
 
-    <!-- ❌ Error Modal -->
+    <!--  Error Modal -->
     <div v-if="showError" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div class="bg-white p-6 rounded shadow text-center">
-        <h2 class="text-xl font-bold text-red-600 mb-4">❌ Login Failed</h2>
+        <h2 class="text-xl font-bold text-red-600 mb-4">Login Failed</h2>
         <p class="text-gray-700 mb-4">{{ errorMessage }}</p>
         <button @click="showError = false" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">
           OK
@@ -38,9 +38,9 @@
       </div>
     </div>
 
-    <!-- ✅ Success Toast -->
+    <!--  Success Toast -->
     <div v-if="showToast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded shadow-md z-50">
-      🎉 Login successful! Redirecting...
+       Login successful! Redirecting...
     </div>
   </div>
 </template>
@@ -69,7 +69,7 @@ export default {
         const token = res.data.access
         localStorage.setItem('token', token)
 
-        // 🔐 Block admin logins silently
+        // Block admin logins silently
         const me = await axios.get('http://localhost:8000/api/patient/me/', {
           headers: { Authorization: `Bearer ${token}` }
         })
@@ -79,7 +79,7 @@ export default {
           throw new Error('unauthorized_role')
         }
 
-        // ✅ Valid patient login
+        // Valid patient login
         this.showToast = true
         setTimeout(() => {
           this.showToast = false
