@@ -130,63 +130,72 @@ export default {
     },
     async pollProgress() {
       try {
+        // ✅ Always include valid JWT token
+        const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+
         const res = await fetch('http://localhost:8000/api/retrain_progress/', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        })
-        if (!res.ok) throw new Error(`Status ${res.status}`)
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
 
-        const data = await res.json()
+        if (!res.ok) throw new Error(`Status ${res.status}`);
 
-        const backendPercent = data.percent
-        const backendSeconds = data.seconds_left
+        const data = await res.json();
 
-        //  Update if backend actually advanced
+        const backendPercent = data.percent;
+        const backendSeconds = data.seconds_left;
+
+        // Update progress only if backend has advanced
         if (backendPercent > this.progressPercent) {
-          this.progressPercent = Math.min(backendPercent, 99.9)
-          this._lastRealUpdate = Date.now()
+          this.progressPercent = Math.min(backendPercent, 99.9);
+          this._lastRealUpdate = Date.now();
         } else {
-          //  If backend hasn't moved for >3s, give a tiny random bump (visual smoothness)
-          const since = Date.now() - (this._lastRealUpdate || 0)
+          //  If backend seems idle, fake small bumps for smoother feel
+          const since = Date.now() - (this._lastRealUpdate || 0);
           if (since > 3000 && this.progressPercent < 90) {
-            const bump = Math.random() * 0.8 // ~less than 1%
-            this.progressPercent = Math.min(this.progressPercent + bump, 90)
+            const bump = Math.random() * 0.8; // ~less than 1%
+            this.progressPercent = Math.min(this.progressPercent + bump, 90);
           }
         }
 
-        // ETA stays real-time
+        //  ETA stays real-time and smooth
         this.secondsLeft =
           backendSeconds > 0
             ? backendSeconds
-            : Math.max(1, Math.floor((100 - this.progressPercent) / 10))
+            : Math.max(1, Math.floor((100 - this.progressPercent) / 10));
 
-        //  Update log naturally
+        //  Update log dynamically
         if (this.progressPercent < 100) {
-          this.log = `Training in progress... (${this.progressPercent.toFixed(1)}%)\n`
+          this.log = `Training in progress... (${this.progressPercent.toFixed(1)}%)\n`;
         }
 
-        //  Smooth finish only AFTER backend finishes
+        //  Smooth finish once backend reports 100%
         if (backendPercent >= 100 && !this.fakeFinalDelay) {
-          this.fakeFinalDelay = true
-          let current = this.progressPercent
+          this.fakeFinalDelay = true;
+          let current = this.progressPercent;
           const smoothFinish = setInterval(() => {
-            current += 1.5
-            this.progressPercent = Math.min(current, 100)
+            current += 1.5;
+            this.progressPercent = Math.min(current, 100);
             if (this.progressPercent >= 100) {
-              clearInterval(smoothFinish)
-              clearInterval(this.interval)
-              clearTimeout(this.timeoutId)
-              this.isRetraining = false
-              this.fakeFinalDelay = false
-              this.log = `Model retraining complete at ${new Date().toLocaleString()}\n`
-              this.fetchModelInfo()
+              clearInterval(smoothFinish);
+              clearInterval(this.interval);
+              clearTimeout(this.timeoutId);
+              this.isRetraining = false;
+              this.fakeFinalDelay = false;
+              this.log = `Model retraining complete at ${new Date().toLocaleString()}\n`;
+              this.fetchModelInfo();
             }
-          }, 150)
+          }, 150);
         }
+
       } catch (err) {
-        clearInterval(this.interval)
-        clearTimeout(this.timeoutId)
-        this.isRetraining = false
-        this.log += `Error polling progress: ${err.message}\n`
+        //  Error handling: stop interval if something goes wrong
+        clearInterval(this.interval);
+        clearTimeout(this.timeoutId);
+        this.isRetraining = false;
+        this.log += `Error polling progress: ${err.message}\n`;
       }
     }
 
