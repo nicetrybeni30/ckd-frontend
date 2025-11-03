@@ -131,41 +131,65 @@ export default {
     async pollProgress() {
       try {
         const res = await fetch('http://localhost:8000/api/retrain_progress/', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
         if (!res.ok) throw new Error(`Status ${res.status}`)
 
         const data = await res.json()
 
-        // Only allow the frontend to increase gradually, not jump
-        if (data.percent > this.progressPercent) {
-          this.progressPercent = Math.min(data.percent, 99.9)
-        }
-        this.secondsLeft = data.seconds_left
-        this.log = ` Training in progress... (${data.percent.toFixed(1)}%)\n`
+        const backendPercent = data.percent
+        const backendSeconds = data.seconds_left
 
-        // Backend might already be done, so fake delay final jump
-        if (data.percent >= 100 && !this.fakeFinalDelay) {
+        //  Update if backend actually advanced
+        if (backendPercent > this.progressPercent) {
+          this.progressPercent = Math.min(backendPercent, 99.9)
+          this._lastRealUpdate = Date.now()
+        } else {
+          //  If backend hasn't moved for >3s, give a tiny random bump (visual smoothness)
+          const since = Date.now() - (this._lastRealUpdate || 0)
+          if (since > 3000 && this.progressPercent < 90) {
+            const bump = Math.random() * 0.8 // ~less than 1%
+            this.progressPercent = Math.min(this.progressPercent + bump, 90)
+          }
+        }
+
+        // ETA stays real-time
+        this.secondsLeft =
+          backendSeconds > 0
+            ? backendSeconds
+            : Math.max(1, Math.floor((100 - this.progressPercent) / 10))
+
+        //  Update log naturally
+        if (this.progressPercent < 100) {
+          this.log = `Training in progress... (${this.progressPercent.toFixed(1)}%)\n`
+        }
+
+        //  Smooth finish only AFTER backend finishes
+        if (backendPercent >= 100 && !this.fakeFinalDelay) {
           this.fakeFinalDelay = true
-          setTimeout(async () => {
-            this.progressPercent = 100
-            clearInterval(this.interval)
-            clearTimeout(this.timeoutId)
-            this.isRetraining = false
-            this.fakeFinalDelay = false
-            this.log = ` Model retraining complete at ${new Date().toLocaleString()}\n`
-            await this.fetchModelInfo()
-          }, 1500) // 1.5s realistic final delay
+          let current = this.progressPercent
+          const smoothFinish = setInterval(() => {
+            current += 1.5
+            this.progressPercent = Math.min(current, 100)
+            if (this.progressPercent >= 100) {
+              clearInterval(smoothFinish)
+              clearInterval(this.interval)
+              clearTimeout(this.timeoutId)
+              this.isRetraining = false
+              this.fakeFinalDelay = false
+              this.log = `Model retraining complete at ${new Date().toLocaleString()}\n`
+              this.fetchModelInfo()
+            }
+          }, 150)
         }
       } catch (err) {
         clearInterval(this.interval)
         clearTimeout(this.timeoutId)
         this.isRetraining = false
-        this.log += ` Error polling progress: ${err.message}\n`
+        this.log += `Error polling progress: ${err.message}\n`
       }
     }
+
   },
   beforeUnmount() {
     if (this.interval) clearInterval(this.interval)
