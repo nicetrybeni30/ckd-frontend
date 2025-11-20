@@ -64,10 +64,10 @@
         </router-link>
 
         <router-link
-          to="/patient/edit"
+          to="/patient/view-stats"
           class="inline-block bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-900 text-center"
         >
-          Edit My Stats 
+          View My Stats
         </router-link>
       </div>
 

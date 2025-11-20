@@ -28,7 +28,24 @@
         </div>
         <div class="bg-white p-4 rounded shadow">
           <h3 class="text-lg font-semibold mb-2">Confidence Over Time</h3>
-          <LineChart :chart-data="lineChartData" :chart-options="lineChartOptions" />
+          <LineChart 
+            :chart-data="lineChartData" 
+            :chart-options="lineChartOptions"
+          />
+        </div>
+      </div>
+
+      <!-- Progression Forecast Chart -->
+      <div class="mt-6 bg-white p-4 rounded shadow">
+        <h3 class="text-lg font-semibold mb-2">CKD Progression Forecast (Next 5 Years)</h3>
+
+        <!-- Responsive chart container -->
+        <div class="w-full">
+          <LineChart 
+            :chart-data="forecastChart" 
+            :chart-options="forecastChartOptions"
+            class="max-h-[260px] sm:max-h-[300px] md:max-h-[320px]"
+          />
         </div>
       </div>
     </div>
@@ -70,29 +87,62 @@ export default {
           y: { min: 0, max: 100, ticks: { stepSize: 10 } }
         }
       },
-      barChartData: {   // 🆕
+
+      barChartData: {   
         labels: [],
         datasets: [{
           label: 'Patients Count',
           data: [],
-          backgroundColor: ['#3b82f6', '#10b981']  // Blue and Green
+          backgroundColor: ['#3b82f6', '#10b981']
         }]
       },
-      barChartOptions: { // 🆕
+
+      barChartOptions: { 
         responsive: true,
         plugins: { legend: { display: false } },
         scales: {
           y: { beginAtZero: true }
         }
-      }
+      },
+      // Forecast Chart (Missing before)
+      forecastChart: {
+        labels: [],
+        datasets: [{
+          label: "CKD Progression (%)",
+          data: [],
+          borderColor: "#ef4444",
+          backgroundColor: "#fecaca",
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      // 🆕 ADD THIS
+      forecastChartOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
+        tension: 0.3,
+        plugins: {
+          legend: { display: true },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { stepSize: 20 }
+          }
+        }
+      },
     }
   },
   async mounted() {
     await this.fetchDashboardData()
     await this.fetchRetrainHistory()
     await this.fetchCKDDistribution()
+    await this.fetchForecast()       // 🆕 Added
   },
+
   methods: {
+
     async fetchDashboardData() {
       const token = localStorage.getItem('token')
       try {
@@ -111,6 +161,7 @@ export default {
         console.error(' Failed to fetch dashboard data:', err)
       }
     },
+
     async fetchRetrainHistory() {
       const token = localStorage.getItem('token')
       try {
@@ -127,7 +178,8 @@ export default {
         console.error(' Failed to fetch retrain history:', err)
       }
     },
-    async fetchCKDDistribution() {   // 🆕
+
+    async fetchCKDDistribution() {   
       const token = localStorage.getItem('token')
       try {
         const res = await axios.get('http://localhost:8000/api/ckd-distribution/', {
@@ -142,7 +194,24 @@ export default {
       } catch (err) {
         console.error(' Failed to fetch CKD distribution:', err)
       }
+    },
+
+    // 🆕 NEW METHOD
+    async fetchForecast() {
+      const token = localStorage.getItem("token")
+      try {
+        const res = await axios.get(`http://localhost:8000/api/progression/1/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+
+        this.forecastChart.labels = res.data.forecast.map(item => item.year)
+        this.forecastChart.datasets[0].data = res.data.forecast.map(item => item.severity)
+
+      } catch (err) {
+        console.error(" Failed to fetch forecast:", err)
+      }
     }
+
   }
 }
 </script>

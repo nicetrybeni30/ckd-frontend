@@ -7,12 +7,12 @@
       <form @submit.prevent="updateAccount" class="space-y-6">
         <div>
           <label class="block mb-1 text-sm font-medium text-gray-700">Username</label>
-          <input v-model="username" type="text" class="w-full border px-3 py-2 rounded" required />
+          <input v-model="username" type="text" class="w-full border px-3 py-2 rounded" disabled  />
         </div>
 
         <div>
           <label class="block mb-1 text-sm font-medium text-gray-700">Email</label>
-          <input v-model="email" type="email" class="w-full border px-3 py-2 rounded" required />
+          <input v-model="email" type="email" class="w-full border px-3 py-2 rounded" disabled  />
         </div>
 
         <div>
@@ -23,7 +23,7 @@
         <div class="flex gap-4">
           <BackButton />
           <button type="submit" class="bg-black text-white px-6 py-2 rounded hover:bg-gray-800">
-            Save Changes
+            Update Password
           </button>
         </div>
 
@@ -98,12 +98,13 @@ export default {
         }
       }
 
-      const payload = {
-        username: this.username,
-        email: this.email
-      }
+      const payload = {}
+
       if (this.newPassword) {
         payload.password = this.newPassword
+      } else {
+        this.message = 'Please enter a new password.'
+        return
       }
 
       try {

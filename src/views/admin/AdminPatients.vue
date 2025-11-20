@@ -2,7 +2,17 @@
   <div class="min-h-screen bg-gray-100">
     <Navbar />
     <div class="p-6 max-w-6xl mx-auto">
-      <h1 class="text-3xl font-bold mb-6">Patients Management</h1>
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Patients Management</h1>
+
+        <router-link 
+          to="/admin/create-patient"
+          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+        >
+          + Create Patient
+        </router-link>
+      </div>
+
 
       <!-- Search Filters -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

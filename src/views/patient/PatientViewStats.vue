@@ -2,14 +2,14 @@
   <div class="min-h-screen bg-gray-100">
     <Navbar />
     <div class="p-6 max-w-2xl mx-auto">
-      <h1 class="text-2xl font-bold mb-6 text-center">Edit {{ isAdmin ? 'Any User' : 'My' }} Health Stats</h1>
+      <h1 class="text-2xl font-bold mb-6 text-center">View {{ isAdmin ? 'Any User' : 'My' }} Health Stats</h1>
 
       <div v-if="form">
         <form @submit.prevent="confirmSave" class="space-y-4">
           <div v-for="([key, value], index) in filteredFormEntries" :key="index">
             <label class="block text-sm font-medium text-gray-700 capitalize mb-1">{{ beautifyLabel(key) }}</label>
 
-            <select v-if="dropdownFields.includes(key)" v-model="form[key]" class="w-full border px-3 py-2 rounded" required>
+            <select v-if="dropdownFields.includes(key)" v-model="form[key]" class="w-full border px-3 py-2 rounded" disabled>
               <option disabled value="">Select...</option>
               <option v-for="option in dropdownOptions[key]" :key="option" :value="option">
                 {{ option }}
@@ -23,16 +23,16 @@
               :step="decimalFields.includes(key) ? 'any' : '1'"
               class="w-full border px-3 py-2 rounded"
               :placeholder="beautifyLabel(key)"
-              required
+              disabled
             />
           </div>
 
-          <div class="flex gap-4 mt-6">
+          <!-- <div class="flex gap-4 mt-6">
             <BackButton />
             <button type="submit" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">
               Save Changes
             </button>
-          </div>
+          </div> -->
 
           <p v-if="message" class="mt-4 text-green-600 text-sm text-center">{{ message }}</p>
         </form>

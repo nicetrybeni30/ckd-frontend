@@ -20,11 +20,11 @@
       </form>
 
       <!-- Create Account Link -->
-      <div class="mt-6 text-center text-sm text-gray-600">
+      <!-- <div class="mt-6 text-center text-sm text-gray-600">
         <p>Don't have an account?
           <router-link to="/patient/signup" class="text-blue-600 hover:underline">Create Account</router-link>
         </p>
-      </div>
+      </div> -->
     </div>
 
     <!--  Error Modal -->
