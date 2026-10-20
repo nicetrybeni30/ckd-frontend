@@ -116,6 +116,7 @@
 import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { apiErrorMessage } from '@/utils/apiError'
 
 export default {
   components: { Navbar },
@@ -189,7 +190,7 @@ export default {
         setTimeout(() => { this.showSuccessToast = false }, 2000)
       } catch (error) {
         this.showErrorToast = true
-        this.errorMessage = 'Failed to delete user!'
+        this.errorMessage = apiErrorMessage(error, 'Failed to delete user!')
         setTimeout(() => { this.showErrorToast = false }, 2000)
       }
     },
@@ -243,7 +244,7 @@ export default {
       } catch (error) {
         console.error(error)
         this.showErrorToast = true
-        this.errorMessage = 'Failed to update user!'
+        this.errorMessage = apiErrorMessage(error, 'Failed to update user!')
         setTimeout(() => { this.showErrorToast = false }, 2000)
       }
     }

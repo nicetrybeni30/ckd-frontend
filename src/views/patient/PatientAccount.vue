@@ -49,6 +49,7 @@ import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { apiErrorMessage } from '@/utils/apiError'
 
 export default {
   components: { Navbar, BackButton },
@@ -118,7 +119,7 @@ export default {
         setTimeout(() => { this.showSuccessToast = false }, 3000)
       } catch (error) {
         console.error('Update failed:', error)
-        this.message = 'Failed to update profile.'
+        this.message = apiErrorMessage(error, 'Failed to update profile.')
         this.messageType = 'error'
         this.showErrorToast = true
         setTimeout(() => { this.showErrorToast = false }, 3000)

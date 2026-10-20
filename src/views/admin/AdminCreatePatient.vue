@@ -70,6 +70,7 @@ import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { apiErrorMessage } from '@/utils/apiError'
 
 export default {
   components: { Navbar, BackButton },
@@ -101,7 +102,7 @@ export default {
         this.showSuccess = true
       } catch (error) {
         console.error(error)
-        this.errorMessage = 'Failed to create account. Try again.'
+        this.errorMessage = apiErrorMessage(error, 'Failed to create account. Try again.')
       }
     },
     finish() {

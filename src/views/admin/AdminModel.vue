@@ -107,12 +107,20 @@ export default {
       })
 
       try {
-        await fetch(`${API_BASE_URL}/api/retrain/`, {
+        const startRes = await fetch(`${API_BASE_URL}/api/retrain/`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         })
+
+        // fetch() does not throw on 4xx/5xx, so check explicitly (e.g. 409 = already running)
+        if (!startRes.ok) {
+          const body = await startRes.json().catch(() => ({}))
+          this.log += ` ${body.error || 'Failed to trigger retraining.'}\n`
+          this.isRetraining = false
+          return
+        }
 
         this.interval = setInterval(this.pollProgress, 1000)
 
@@ -120,8 +128,7 @@ export default {
           if (this.isRetraining) {
             clearInterval(this.interval)
             this.isRetraining = false
-            this.log += ' Training timed out after 10 minutes.\n'
-            alert(' Training took too long and was auto-stopped.')
+            this.log += ' Training took too long (10 minutes) and progress tracking was stopped.\n'
           }
         }, 600000) // 10 mins max
       } catch (err) {
@@ -144,6 +151,15 @@ export default {
         if (!res.ok) throw new Error(`Status ${res.status}`);
 
         const data = await res.json();
+
+        // Backend writes {"error": ...} to the progress file if training fails
+        if (data.error) {
+          clearInterval(this.interval);
+          clearTimeout(this.timeoutId);
+          this.isRetraining = false;
+          this.log = ` ${data.error}\n`;
+          return;
+        }
 
         const backendPercent = data.percent;
         const backendSeconds = data.seconds_left;
