@@ -3,7 +3,7 @@ import axios from 'axios'
 import App from './App.vue'
 import router from './router'
 import './assets/tailwind.css'
-import { getToken, getRole, clearSession, loginPathFor } from './auth'
+import { getToken, getRole, clearSession, loginPathFor, isExpiredSessionError } from './auth'
 
 import api from './axios'
 
@@ -14,8 +14,7 @@ import api from './axios'
 axios.interceptors.response.use(
   (response) => response,
   (error) => {
-    const isLoginRequest = error.config?.url?.includes('/api/token/')
-    if (error.response?.status === 401 && !isLoginRequest && getToken()) {
+    if (isExpiredSessionError(error, getToken())) {
       const loginPath = loginPathFor(getRole())
       clearSession()
       router.push(loginPath)

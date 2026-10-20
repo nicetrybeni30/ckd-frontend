@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { getToken, getRole, loginPathFor, homePathFor } from '@/auth'
+import { getToken, getRole, guardRedirect } from '@/auth'
 
 // Patient
 import PatientLogin from '@/views/patient/PatientLogin.vue'
@@ -48,15 +48,6 @@ const router = createRouter({
 
 // Send users to the right login page if they are not signed in, and keep
 // patients out of admin pages (and vice versa).
-router.beforeEach((to) => {
-  const requiredRole = to.meta.role
-  if (!requiredRole) return true
-
-  const token = getToken()
-  const role = getRole()
-  if (!token || !role) return loginPathFor(requiredRole)
-  if (role !== requiredRole) return homePathFor(role)
-  return true
-})
+router.beforeEach((to) => guardRedirect(to.meta.role, getToken(), getRole()))
 
 export default router
