@@ -56,6 +56,7 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue'
+import { baseURL } from '@/api'
 
 export default {
   components: { Navbar },
@@ -78,7 +79,7 @@ export default {
   methods: {
     async fetchModelInfo() {
       try {
-        const res = await fetch('http://localhost:8000/api/model-info/', {
+        const res = await fetch(`${baseURL}/api/model-info/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -106,7 +107,7 @@ export default {
       })
 
       try {
-        await fetch('http://localhost:8000/api/retrain/', {
+        await fetch(`${baseURL}/api/retrain/`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -130,7 +131,7 @@ export default {
     },
     async pollProgress() {
       try {
-        const res = await fetch('http://localhost:8000/api/retrain_progress/', {
+        const res = await fetch(`${baseURL}/api/retrain_progress/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }

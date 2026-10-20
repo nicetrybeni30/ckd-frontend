@@ -47,7 +47,7 @@
 <script>
 import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
-import axios from 'axios'
+import api from '@/api'
 
 export default {
   components: { Navbar, BackButton },
@@ -65,7 +65,7 @@ export default {
   async mounted() {
     const token = localStorage.getItem('token')
     try {
-      const res = await axios.get('http://localhost:8000/api/patient/me/', {
+      const res = await api.get('/api/patient/me/', {
         headers: { Authorization: `Bearer ${token}` }
       })
       this.username = res.data.username
@@ -107,7 +107,7 @@ export default {
       }
 
       try {
-        await axios.put('http://localhost:8000/api/account/update/', payload, {
+        await api.put('/api/account/update/', payload, {
           headers: { Authorization: `Bearer ${token}` }
         })
         this.message = 'Profile updated successfully!'

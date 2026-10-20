@@ -77,7 +77,7 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue'
-import axios from 'axios'
+import api from '@/api'
 
 export default {
   components: { Navbar },
@@ -91,14 +91,14 @@ export default {
   async mounted() {
     const token = localStorage.getItem('token')
     try {
-      const userRes = await axios.get('http://localhost:8000/api/patient/me/', {
+      const userRes = await api.get('/api/patient/me/', {
         headers: { Authorization: `Bearer ${token}` }
       })
       this.userInfo = userRes.data
 
       if (this.userInfo.role === 'patient') {
         try {
-          const recordRes = await axios.get('http://localhost:8000/api/records/me', {
+          const recordRes = await api.get('/api/records/me', {
             headers: { Authorization: `Bearer ${token}` }
           })
           this.patientData = recordRes.data

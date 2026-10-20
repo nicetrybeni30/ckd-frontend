@@ -22,7 +22,7 @@
   </template>
   
   <script>
-  import axios from 'axios'
+  import api from '@/api'
   
   export default {
     props: {
@@ -41,7 +41,7 @@
       async saveChanges() {
         const token = localStorage.getItem('token')
         try {
-          await axios.put(`http://localhost:8000/api/users/${this.patient.id}/`, this.form, {
+          await api.put(`/api/users/${this.patient.id}/`, this.form, {
             headers: { Authorization: `Bearer ${token}` }
           })
           this.$emit('updated') // refresh parent after saving

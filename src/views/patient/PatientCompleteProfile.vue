@@ -59,7 +59,7 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue'
-import axios from 'axios'
+import api from '@/api'
 
 export default {
   components: { Navbar },
@@ -128,7 +128,7 @@ export default {
           return
         }
 
-        const response = await axios.post('http://localhost:8000/api/records/create/', this.form, {
+        const response = await api.post('/api/records/create/', this.form, {
           headers: { Authorization: `Bearer ${token}` }
         })
 

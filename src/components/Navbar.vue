@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import api from '@/api'
 
 export default {
   data() {
@@ -35,7 +35,7 @@ export default {
     }
 
     try {
-      const res = await axios.get('http://localhost:8000/api/patient/me/', {
+      const res = await api.get('/api/patient/me/', {
         headers: {
           Authorization: `Bearer ${token}`
         }
