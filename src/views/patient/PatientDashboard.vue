@@ -99,7 +99,7 @@ export default {
 
       if (this.userInfo.role === 'patient') {
         try {
-          const recordRes = await axios.get(`${API_BASE_URL}/api/records/me`, {
+          const recordRes = await axios.get(`${API_BASE_URL}/api/records/me/`, {
             headers: { Authorization: `Bearer ${token}` }
           })
           this.patientData = recordRes.data

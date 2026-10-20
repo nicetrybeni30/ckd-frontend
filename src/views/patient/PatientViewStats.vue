@@ -154,7 +154,7 @@ export default {
       const token = localStorage.getItem('token')
       const url = this.isAdmin
         ? `${API_BASE_URL}/api/records/${this.selectedUser}/`
-        : `${API_BASE_URL}/api/records/me`
+        : `${API_BASE_URL}/api/records/me/`
 
       try {
         const res = await axios.get(url, {
