@@ -49,6 +49,7 @@
 
 <script>
 import axios from 'axios'
+import { API_BASE_URL } from '@/config'
 
 export default {
   name: "AdminLogin",
@@ -64,7 +65,7 @@ export default {
   methods: {
     async login() {
       try {
-        const response = await axios.post('http://localhost:8000/api/token/', {
+        const response = await axios.post(`${API_BASE_URL}/api/token/`, {
           username: this.username,
           password: this.password
         })

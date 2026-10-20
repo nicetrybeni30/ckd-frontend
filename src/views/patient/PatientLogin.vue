@@ -47,6 +47,7 @@
 
 <script>
 import axios from 'axios'
+import { API_BASE_URL } from '@/config'
 
 export default {
   data() {
@@ -61,7 +62,7 @@ export default {
   methods: {
     async login() {
       try {
-        const res = await axios.post('http://localhost:8000/api/token/', {
+        const res = await axios.post(`${API_BASE_URL}/api/token/`, {
           username: this.username,
           password: this.password
         })
@@ -70,7 +71,7 @@ export default {
         localStorage.setItem('token', token)
 
         // Block admin logins silently
-        const me = await axios.get('http://localhost:8000/api/patient/me/', {
+        const me = await axios.get(`${API_BASE_URL}/api/patient/me/`, {
           headers: { Authorization: `Bearer ${token}` }
         })
 

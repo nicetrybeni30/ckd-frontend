@@ -56,6 +56,7 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue'
+import { API_BASE_URL } from '@/config'
 
 export default {
   components: { Navbar },
@@ -78,7 +79,7 @@ export default {
   methods: {
     async fetchModelInfo() {
       try {
-        const res = await fetch('http://localhost:8000/api/model-info/', {
+        const res = await fetch(`${API_BASE_URL}/api/model-info/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
@@ -106,7 +107,7 @@ export default {
       })
 
       try {
-        await fetch('http://localhost:8000/api/retrain/', {
+        await fetch(`${API_BASE_URL}/api/retrain/`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -133,7 +134,7 @@ export default {
         // ✅ Always include valid JWT token
         const token = localStorage.getItem('access_token') || localStorage.getItem('token');
 
-        const res = await fetch('http://localhost:8000/api/retrain_progress/', {
+        const res = await fetch(`${API_BASE_URL}/api/retrain_progress/`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

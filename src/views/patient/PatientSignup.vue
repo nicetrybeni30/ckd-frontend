@@ -34,6 +34,7 @@
   
   <script>
   import axios from 'axios'
+  import { API_BASE_URL } from '@/config'
   
   export default {
     data() {
@@ -70,14 +71,14 @@
   
         try {
           // 🛠 Step 1: Register the user
-          await axios.post('http://localhost:8000/api/register/', {
+          await axios.post(`${API_BASE_URL}/api/register/`, {
             username: this.username,
             email: this.email,
             password: this.password
           })
   
           // 🛠 Step 2: Immediately login and save token
-          const res = await axios.post('http://localhost:8000/api/token/', {
+          const res = await axios.post(`${API_BASE_URL}/api/token/`, {
             username: this.username,
             password: this.password
           })

@@ -192,6 +192,7 @@
 <script>
 import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
+import { API_BASE_URL } from '@/config'
 
 export default {
   components: { Navbar },
@@ -272,7 +273,7 @@ export default {
 
     async fetchUsers() {
       try {
-        const res = await axios.get('http://localhost:8000/api/users-with-records/', {
+        const res = await axios.get(`${API_BASE_URL}/api/users-with-records/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
         this.users = res.data
@@ -312,7 +313,7 @@ export default {
 
     async createRecord(user) {
       try {
-        await axios.post(`http://localhost:8000/api/records/${user.id}/create/`, {}, {
+        await axios.post(`${API_BASE_URL}/api/records/${user.id}/create/`, {}, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
         this.successMessage = 'Patient record created successfully!'
@@ -353,7 +354,7 @@ export default {
       this.saving = true
       try {
         await axios.put(
-          `http://localhost:8000/api/records/${this.selectedUser.id}/`,
+          `${API_BASE_URL}/api/records/${this.selectedUser.id}/`,
           this.editableRecord,
           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
         )

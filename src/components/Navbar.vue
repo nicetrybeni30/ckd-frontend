@@ -21,6 +21,7 @@
 
 <script>
 import axios from 'axios'
+import { API_BASE_URL } from '@/config'
 
 export default {
   data() {
@@ -35,7 +36,7 @@ export default {
     }
 
     try {
-      const res = await axios.get('http://localhost:8000/api/patient/me/', {
+      const res = await axios.get(`${API_BASE_URL}/api/patient/me/`, {
         headers: {
           Authorization: `Bearer ${token}`
         }

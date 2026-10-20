@@ -115,6 +115,7 @@
 <script>
 import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
+import { API_BASE_URL } from '@/config'
 
 export default {
   components: { Navbar },
@@ -158,7 +159,7 @@ export default {
   methods: {
     async fetchUsers() {
       try {
-        const res = await axios.get('http://localhost:8000/api/users/', {
+        const res = await axios.get(`${API_BASE_URL}/api/users/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
         this.users = res.data
@@ -178,7 +179,7 @@ export default {
     },
     async deleteUser() {
       try {
-        await axios.delete(`http://localhost:8000/api/users/${this.selectedUser.id}/`, {
+        await axios.delete(`${API_BASE_URL}/api/users/${this.selectedUser.id}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
         this.showSuccessToast = true
@@ -224,7 +225,7 @@ export default {
           delete payload.new_password
         }
 
-        await axios.put(`http://localhost:8000/api/users/${this.editUser.id}/`, payload, {
+        await axios.put(`${API_BASE_URL}/api/users/${this.editUser.id}/`, payload, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
 

@@ -69,6 +69,7 @@
 import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
+import { API_BASE_URL } from '@/config'
 
 export default {
   components: { Navbar, BackButton },
@@ -87,7 +88,7 @@ export default {
         const token = localStorage.getItem('token')
 
         await axios.post(
-          'http://localhost:8000/api/users/create/',
+          `${API_BASE_URL}/api/users/create/`,
           {
             username: this.username,
             email: this.email,

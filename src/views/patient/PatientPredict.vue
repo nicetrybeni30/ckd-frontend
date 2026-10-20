@@ -59,6 +59,7 @@
 import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
+import { API_BASE_URL } from '@/config'
 
 export default {
   components: { Navbar, BackButton },
@@ -77,7 +78,7 @@ export default {
       this.loading = true
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.post('http://localhost:8000/api/predict/', {}, {
+        const response = await axios.post(`${API_BASE_URL}/api/predict/`, {}, {
           headers: { Authorization: `Bearer ${token}` }
         })
         this.result = response.data

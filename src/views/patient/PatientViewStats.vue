@@ -71,6 +71,7 @@
 import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
+import { API_BASE_URL } from '@/config'
 
 export default {
   components: { Navbar, BackButton },
@@ -120,12 +121,12 @@ export default {
   async mounted() {
     const token = localStorage.getItem('token')
     try {
-      const me = await axios.get('http://localhost:8000/api/patient/me/', {
+      const me = await axios.get(`${API_BASE_URL}/api/patient/me/`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       this.isAdmin = me.data.role === 'admin'
       if (this.isAdmin) {
-        const res = await axios.get('http://localhost:8000/api/users/', {
+        const res = await axios.get(`${API_BASE_URL}/api/users/`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         this.users = res.data
@@ -152,8 +153,8 @@ export default {
     async fetchStats() {
       const token = localStorage.getItem('token')
       const url = this.isAdmin
-        ? `http://localhost:8000/api/records/${this.selectedUser}/`
-        : `http://localhost:8000/api/records/me`
+        ? `${API_BASE_URL}/api/records/${this.selectedUser}/`
+        : `${API_BASE_URL}/api/records/me`
 
       try {
         const res = await axios.get(url, {
@@ -208,7 +209,7 @@ export default {
         }
 
         console.log("Submitting payload:", payload)
-        await axios.put('http://localhost:8000/api/records/me/', payload, {
+        await axios.put(`${API_BASE_URL}/api/records/me/`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         })
 
