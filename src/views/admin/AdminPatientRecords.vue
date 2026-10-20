@@ -320,7 +320,7 @@ export default {
         this.successMessage = 'Patient record created successfully!'
         this.showSuccessToast = true
         await this.fetchUsers()
-      } catch (error) {
+      } catch {
         this.errorMessage = 'Failed to create record.'
         this.showErrorToast = true
       }
@@ -364,7 +364,7 @@ export default {
         this.showModal = false
         await this.fetchUsers()
         this.applySearch() 
-      } catch (error) {
+      } catch {
         this.errorMessage = 'Update failed.'
         this.showErrorToast = true
       } finally {

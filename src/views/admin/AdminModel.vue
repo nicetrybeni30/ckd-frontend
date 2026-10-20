@@ -87,7 +87,7 @@ export default {
         const data = await res.json()
         this.modelAccuracy = data.model_accuracy || 'N/A'
         this.retrainedAt = data.retrained_at || 'Unknown'
-      } catch (e) {
+      } catch {
         this.modelAccuracy = 'N/A'
         this.retrainedAt = 'Unknown'
         this.log += ' Failed to fetch model info.\n'
@@ -131,7 +131,7 @@ export default {
             this.log += ' Training took too long (10 minutes) and progress tracking was stopped.\n'
           }
         }, 600000) // 10 mins max
-      } catch (err) {
+      } catch {
         this.log += ' Failed to trigger retraining.\n'
         this.isRetraining = false
       }

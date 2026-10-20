@@ -130,7 +130,7 @@ export default {
           return
         }
 
-        const response = await axios.post(`${API_BASE_URL}/api/records/create/`, this.form, {
+        await axios.post(`${API_BASE_URL}/api/records/create/`, this.form, {
           headers: { Authorization: `Bearer ${token}` }
         })
 

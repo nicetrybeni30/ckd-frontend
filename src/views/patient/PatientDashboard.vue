@@ -104,7 +104,7 @@ export default {
             headers: { Authorization: `Bearer ${token}` }
           })
           this.patientData = recordRes.data
-        } catch (err) {
+        } catch {
           console.warn("No patient record found yet.")
           this.patientData = null
         }

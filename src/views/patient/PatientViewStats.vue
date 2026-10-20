@@ -175,7 +175,7 @@ export default {
       const token = localStorage.getItem('token')
       try {
         const payload = {}
-        for (const [key, value] of Object.entries(this.originalForm)) {
+        for (const key of Object.keys(this.originalForm)) {
           if (!this.nonEditableFields.includes(key)) {
             payload[key] = this.form[key] !== '' ? this.form[key] : null
           }
