@@ -1,5 +1,31 @@
-# Vue 3 + Vite
+# Chronic Kidney Disease (CKD) Prediction System
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This project is composed of:
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+- **Backend**: Django REST Framework (Python)
+- **Frontend**: Vue.js 3 + Tailwind CSS (Vite)
+
+---
+
+## 🛠 Requirements
+
+- Python 3.10+
+- Node.js 18+ and NPM
+- Virtualenv (`python -m venv venv`)
+
+---
+
+## ⚙️ Frontend Setup (ckd-frontend)
+
+```bash
+Step 1: Clone the Repository
+git clone git@github.com:nicetrybeni30/ckd-frontend.git
+cd ckd-frontend
+
+Step 2: Install Node.js Dependencies
+npm install
+
+Step 3: Run the Development Server
+npm run dev
+
+✅ Your Vue.js frontend will now run on http://localhost:3000
