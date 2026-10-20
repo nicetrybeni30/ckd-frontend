@@ -38,7 +38,7 @@
 <script>
 import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
-import axios from 'axios'
+import api from '@/api'
 
 export default {
   components: { Navbar, BackButton },
@@ -67,7 +67,7 @@ export default {
     async submitRecord() {
       try {
         const token = localStorage.getItem('token')
-        await axios.post('http://localhost:8000/api/records/create/', this.form, {
+        await api.post('/api/records/create/', this.form, {
           headers: { Authorization: `Bearer ${token}` }
         })
         this.$router.push('/patient/dashboard')

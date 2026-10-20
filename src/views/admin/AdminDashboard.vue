@@ -39,7 +39,7 @@
 import Navbar from '@/components/Navbar.vue'
 import BarChart from '@/components/BarChart.vue'
 import LineChart from '@/components/LineChart.vue'
-import axios from 'axios'
+import api from '@/api'
 
 export default {
   components: {
@@ -96,13 +96,13 @@ export default {
     async fetchDashboardData() {
       const token = localStorage.getItem('token')
       try {
-        const usersRes = await axios.get('http://localhost:8000/api/users/', {
+        const usersRes = await api.get('/api/users/', {
           headers: { Authorization: `Bearer ${token}` }
         })
         const patients = usersRes.data.filter(user => user.role === 'patient')
         this.totalPatients = patients.length
 
-        const modelRes = await axios.get('http://localhost:8000/api/model-info/', {
+        const modelRes = await api.get('/api/model-info/', {
           headers: { Authorization: `Bearer ${token}` }
         })
         this.modelAccuracy = modelRes.data.model_accuracy || 'N/A'
@@ -114,7 +114,7 @@ export default {
     async fetchRetrainHistory() {
       const token = localStorage.getItem('token')
       try {
-        const res = await axios.get('http://localhost:8000/api/retrain-history/', {
+        const res = await api.get('/api/retrain-history/', {
           headers: { Authorization: `Bearer ${token}` }
         })
 
@@ -130,7 +130,7 @@ export default {
     async fetchCKDDistribution() {   // 🆕
       const token = localStorage.getItem('token')
       try {
-        const res = await axios.get('http://localhost:8000/api/ckd-distribution/', {
+        const res = await api.get('/api/ckd-distribution/', {
           headers: { Authorization: `Bearer ${token}` }
         })
 

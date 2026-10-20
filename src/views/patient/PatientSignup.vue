@@ -33,7 +33,7 @@
   </template>
   
   <script>
-  import axios from 'axios'
+  import api from '@/api'
   
   export default {
     data() {
@@ -70,14 +70,14 @@
   
         try {
           // 🛠 Step 1: Register the user
-          await axios.post('http://localhost:8000/api/register/', {
+          await api.post('/api/register/', {
             username: this.username,
             email: this.email,
             password: this.password
           })
   
           // 🛠 Step 2: Immediately login and save token
-          const res = await axios.post('http://localhost:8000/api/token/', {
+          const res = await api.post('/api/token/', {
             username: this.username,
             password: this.password
           })
