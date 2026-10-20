@@ -22,6 +22,7 @@
 <script>
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
 import { clearSession, loginPathFor } from '@/auth'
 
 export default {
@@ -44,7 +45,7 @@ export default {
       })
       this.userRole = res.data.role
     } catch (error) {
-      console.error('Navbar failed to load user info:', error)
+      logApiError('Navbar failed to load user info:', error)
     }
   },
   methods: {

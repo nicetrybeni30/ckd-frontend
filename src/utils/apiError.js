@@ -9,3 +9,27 @@ export function apiErrorMessage(error, fallback = 'Something went wrong. Please 
   }
   return fallback
 }
+
+// Safe summary of a failed request for console logging. Never includes the
+// request body (passwords, lab values) or headers (the JWT), which a raw axios
+// error object carries in error.config.
+export function describeApiError(error) {
+  const method = error?.config?.method ? error.config.method.toUpperCase() : undefined
+  let path = error?.config?.url
+  if (path) {
+    try {
+      path = new URL(path, 'http://localhost').pathname
+    } catch {
+      path = undefined
+    }
+  }
+  return {
+    status: error?.response?.status ?? (error?.request ? 'no response' : undefined),
+    request: method && path ? `${method} ${path}` : undefined,
+    message: error?.message,
+  }
+}
+
+export function logApiError(context, error) {
+  console.error(context, describeApiError(error))
+}

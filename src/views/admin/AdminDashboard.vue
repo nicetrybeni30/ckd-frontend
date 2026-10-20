@@ -72,6 +72,7 @@ import BarChart from '@/components/BarChart.vue'
 import LineChart from '@/components/LineChart.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
 
 export default {
   components: {
@@ -177,7 +178,7 @@ export default {
         this.modelAccuracy = modelRes.data.model_accuracy || 'N/A'
         this.lastRetrained = modelRes.data.retrained_at || 'N/A'
       } catch (err) {
-        console.error(' Failed to fetch dashboard data:', err)
+        logApiError(' Failed to fetch dashboard data:', err)
       }
     },
 
@@ -194,7 +195,7 @@ export default {
         this.lineChartData.labels = labels
         this.lineChartData.datasets[0].data = data
       } catch (err) {
-        console.error(' Failed to fetch retrain history:', err)
+        logApiError(' Failed to fetch retrain history:', err)
       }
     },
 
@@ -211,7 +212,7 @@ export default {
         this.barChartData.labels = labels
         this.barChartData.datasets[0].data = counts
       } catch (err) {
-        console.error(' Failed to fetch CKD distribution:', err)
+        logApiError(' Failed to fetch CKD distribution:', err)
       }
     },
 
@@ -232,7 +233,7 @@ export default {
           this.forecastMessage = 'No patients with health records yet.'
         }
       } catch (err) {
-        console.error(" Failed to fetch patients for forecast:", err)
+        logApiError(" Failed to fetch patients for forecast:", err)
         this.forecastMessage = 'Could not load patients for the forecast.'
       }
     },
@@ -250,7 +251,7 @@ export default {
         this.forecastChart.datasets[0].data = res.data.forecast.map(item => item.severity)
 
       } catch (err) {
-        console.error(" Failed to fetch forecast:", err)
+        logApiError(" Failed to fetch forecast:", err)
         this.forecastMessage = 'Could not load the forecast for this patient.'
       }
     }

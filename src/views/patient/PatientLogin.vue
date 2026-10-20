@@ -48,6 +48,7 @@
 <script>
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
 import { setSession, clearSession } from '@/auth'
 
 export default {
@@ -89,7 +90,7 @@ export default {
         }, 2000)
 
       } catch (err) {
-        console.error('Login failed:', err)
+        logApiError('Login failed:', err)
         this.showError = true
         if (err.message === 'unauthorized_role') {
           this.errorMessage = 'Invalid username or password.'

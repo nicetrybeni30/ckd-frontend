@@ -50,6 +50,7 @@
 <script>
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
 import { setSession, clearSession } from '@/auth'
 
 export default {
@@ -90,7 +91,7 @@ export default {
           this.$router.push('/admin/dashboard')
         }, 2000)
       } catch (err) {
-        console.error(' Login failed:', err)
+        logApiError(' Login failed:', err)
         this.showError = true
         if (err.message === 'unauthorized_role' || (err.response && err.response.status === 401)) {
           this.errorMessage = 'Invalid username or password.'

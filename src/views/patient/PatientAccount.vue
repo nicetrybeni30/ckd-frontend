@@ -49,7 +49,7 @@ import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
-import { apiErrorMessage } from '@/utils/apiError'
+import { apiErrorMessage, logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar, BackButton },
@@ -73,7 +73,7 @@ export default {
       this.username = res.data.username
       this.email = res.data.email
     } catch (error) {
-      console.error('Failed to load user info:', error)
+      logApiError('Failed to load user info:', error)
     }
   },
   methods: {
@@ -118,7 +118,7 @@ export default {
         this.showSuccessToast = true
         setTimeout(() => { this.showSuccessToast = false }, 3000)
       } catch (error) {
-        console.error('Update failed:', error)
+        logApiError('Update failed:', error)
         this.message = apiErrorMessage(error, 'Failed to update profile.')
         this.messageType = 'error'
         this.showErrorToast = true

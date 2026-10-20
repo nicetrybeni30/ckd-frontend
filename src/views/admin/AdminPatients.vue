@@ -116,7 +116,7 @@
 import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
-import { apiErrorMessage } from '@/utils/apiError'
+import { apiErrorMessage, logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar },
@@ -165,7 +165,7 @@ export default {
         })
         this.users = res.data
       } catch (error) {
-        console.error('Failed to fetch users', error)
+        logApiError('Failed to fetch users', error)
       }
     },
     prevPage() {
@@ -242,7 +242,7 @@ export default {
         setTimeout(() => { this.showSuccessToast = false }, 2000)
 
       } catch (error) {
-        console.error(error)
+        logApiError('Request failed:', error)
         this.showErrorToast = true
         this.errorMessage = apiErrorMessage(error, 'Failed to update user!')
         setTimeout(() => { this.showErrorToast = false }, 2000)

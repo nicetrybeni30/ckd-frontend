@@ -40,6 +40,7 @@ import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar, BackButton },
@@ -73,7 +74,7 @@ export default {
         })
         this.$router.push('/patient/dashboard')
       } catch (err) {
-        console.error('Error creating record', err)
+        logApiError('Error creating record', err)
         this.showError = true
       }
     }

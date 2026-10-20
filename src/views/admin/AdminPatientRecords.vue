@@ -193,6 +193,7 @@
 import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar },
@@ -279,7 +280,7 @@ export default {
         this.users = res.data
         this.filteredUsers = res.data
       } catch (error) {
-        console.error('Failed to fetch users with records:', error)
+        logApiError('Failed to fetch users with records:', error)
       }
     },
 

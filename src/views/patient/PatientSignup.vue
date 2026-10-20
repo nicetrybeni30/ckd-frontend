@@ -35,6 +35,7 @@
   <script>
   import axios from 'axios'
   import { API_BASE_URL } from '@/config'
+  import { logApiError } from '@/utils/apiError'
   import { setSession } from '@/auth'
   
   export default {
@@ -91,7 +92,7 @@
           }, 1000)
   
         } catch (err) {
-          console.error(err)
+          logApiError('Request failed:', err)
   
           if (err.response?.status === 400) {
             this.error = 'Username or Email already exists.'

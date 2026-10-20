@@ -79,6 +79,7 @@
 import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar },
@@ -109,7 +110,7 @@ export default {
         }
       }
     } catch (error) {
-      console.error("Failed to load dashboard data:", error)
+      logApiError("Failed to load dashboard data:", error)
     }
 
     // Detect if coming from complete-profile

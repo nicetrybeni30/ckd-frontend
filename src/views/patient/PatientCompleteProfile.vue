@@ -61,6 +61,7 @@
 import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar },
@@ -135,7 +136,7 @@ export default {
 
         this.showSuccessModal = true
       } catch (error) {
-        console.error(' Failed to complete profile', error)
+        logApiError(' Failed to complete profile', error)
         this.showErrorModal = true
         if (error.response?.status === 400) {
           this.errorMessage = "⚠️ Please fill out all fields correctly."
