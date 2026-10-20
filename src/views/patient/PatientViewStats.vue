@@ -208,7 +208,6 @@ export default {
           return
         }
 
-        console.log("Submitting payload:", payload)
         await axios.put(`${API_BASE_URL}/api/records/me/`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         })

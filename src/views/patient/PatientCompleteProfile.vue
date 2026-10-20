@@ -133,7 +133,6 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         })
 
-        console.log(' Successfully submitted:', response.data)
         this.showSuccessModal = true
       } catch (error) {
         console.error(' Failed to complete profile', error)
