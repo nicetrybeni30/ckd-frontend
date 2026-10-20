@@ -51,6 +51,22 @@ Vite bakes `VITE_*` values in at **build time**, so set it before `npm run build
 
 ---
 
+## ✅ Tests
+
+```bash
+npm test     # Node's built-in test runner, no extra dependencies
+```
+
+Covers `src/auth.js` (session storage, route-guard decisions incl. the tampered-role case,
+session-expiry detection) and `src/utils/apiError.js` (error messages and safe logging).
+Vue components are not covered yet (no component test tooling installed).
+
+**Logging rule:** never `console.log`/`console.error` a raw axios error or response. They
+contain the request body (passwords, lab values) and the `Authorization` header. Use
+`logApiError(context, error)` from `src/utils/apiError.js`.
+
+---
+
 ## 📦 Build
 
 ```bash
@@ -66,8 +82,8 @@ GitHub Pages, Nginx). Because it uses HTML5 history routing, configure the host 
 
 ## 🚧 Known gaps / next steps
 
-- **No automated tests or linter yet.** Suggested: Vitest + Vue Test Utils for auth/guards,
-  and ESLint (`eslint-plugin-vue`).
+- **No component tests or linter config yet.** `npm test` covers the auth and error helpers only.
+  Suggested next: Vitest + Vue Test Utils for components, and ESLint with `eslint-plugin-vue`.
 - **Pages use raw `axios`** with headers added by hand. `src/axios.js` (`this.$api`) has a
   shared instance with a JWT interceptor that pages could move to, one page at a time.
   Watch out: it sends `withCredentials` and redirects on 401.
