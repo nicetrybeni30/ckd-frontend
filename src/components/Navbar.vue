@@ -22,6 +22,7 @@
 <script>
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { clearSession, loginPathFor } from '@/auth'
 
 export default {
   data() {
@@ -48,9 +49,10 @@ export default {
   },
   methods: {
     logout() {
-      localStorage.removeItem('token')
+      const loginPath = loginPathFor(this.userRole)
+      clearSession()
       this.userRole = null
-      this.$router.push('/patient/login')
+      this.$router.push(loginPath)
     }
   }
 }

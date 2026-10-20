@@ -50,6 +50,7 @@
 <script>
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { setSession, clearSession } from '@/auth'
 
 export default {
   name: "AdminLogin",
@@ -71,7 +72,16 @@ export default {
         })
 
         const token = response.data.access
-        localStorage.setItem('token', token)
+
+        // Only admin accounts may sign in here
+        const me = await axios.get(`${API_BASE_URL}/api/patient/me/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        if (me.data.role !== 'admin') {
+          clearSession()
+          throw new Error('unauthorized_role')
+        }
+        setSession(token, 'admin')
 
         this.showToast = true
 
@@ -82,8 +92,10 @@ export default {
       } catch (err) {
         console.error(' Login failed:', err)
         this.showError = true
-        if (err.response && err.response.status === 401) {
+        if (err.message === 'unauthorized_role' || (err.response && err.response.status === 401)) {
           this.errorMessage = 'Invalid username or password.'
+        } else if (err.response && err.response.status === 429) {
+          this.errorMessage = 'Too many login attempts. Please wait a minute and try again.'
         } else {
           this.errorMessage = 'An unexpected error occurred. Please try again.'
         }

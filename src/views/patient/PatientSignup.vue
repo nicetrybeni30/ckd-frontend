@@ -35,6 +35,7 @@
   <script>
   import axios from 'axios'
   import { API_BASE_URL } from '@/config'
+  import { setSession } from '@/auth'
   
   export default {
     data() {
@@ -82,7 +83,7 @@
             username: this.username,
             password: this.password
           })
-          localStorage.setItem('token', res.data.access)
+          setSession(res.data.access, 'patient')
   
           this.success = true
           setTimeout(() => {
