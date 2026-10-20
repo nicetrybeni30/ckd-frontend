@@ -37,7 +37,21 @@
 
       <!-- Progression Forecast Chart -->
       <div class="mt-6 bg-white p-4 rounded shadow">
-        <h3 class="text-lg font-semibold mb-2">CKD Progression Forecast (Next 5 Years)</h3>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+          <h3 class="text-lg font-semibold">CKD Progression Forecast (Next 5 Years)</h3>
+          <div v-if="forecastPatients.length" class="flex items-center gap-2">
+            <label for="forecast-patient" class="text-sm text-gray-600">Patient</label>
+            <select
+              id="forecast-patient"
+              v-model="selectedForecastUser"
+              @change="fetchForecast"
+              class="border rounded p-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option v-for="p in forecastPatients" :key="p.id" :value="p.id">{{ p.username }}</option>
+            </select>
+          </div>
+        </div>
+        <p v-if="forecastMessage" class="text-sm text-gray-500 mb-2">{{ forecastMessage }}</p>
 
         <!-- Responsive chart container -->
         <div class="w-full">
@@ -105,6 +119,10 @@ export default {
           y: { beginAtZero: true }
         }
       },
+      // Patients with a health record, for the forecast picker
+      forecastPatients: [],
+      selectedForecastUser: null,
+      forecastMessage: '',
       // Forecast Chart (Missing before)
       forecastChart: {
         labels: [],
@@ -139,7 +157,7 @@ export default {
     await this.fetchDashboardData()
     await this.fetchRetrainHistory()
     await this.fetchCKDDistribution()
-    await this.fetchForecast()       // 🆕 Added
+    await this.fetchForecastPatients()
   },
 
   methods: {
@@ -198,10 +216,33 @@ export default {
     },
 
     // 🆕 NEW METHOD
-    async fetchForecast() {
+    // Previously the forecast was hardcoded to user id 1 (usually the admin,
+    // who has no record). Let the admin pick a patient instead.
+    async fetchForecastPatients() {
       const token = localStorage.getItem("token")
       try {
-        const res = await axios.get(`${API_BASE_URL}/api/progression/1/`, {
+        const res = await axios.get(`${API_BASE_URL}/api/users-with-records/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        this.forecastPatients = res.data.filter(p => p.record)
+        if (this.forecastPatients.length) {
+          this.selectedForecastUser = this.forecastPatients[0].id
+          await this.fetchForecast()
+        } else {
+          this.forecastMessage = 'No patients with health records yet.'
+        }
+      } catch (err) {
+        console.error(" Failed to fetch patients for forecast:", err)
+        this.forecastMessage = 'Could not load patients for the forecast.'
+      }
+    },
+
+    async fetchForecast() {
+      if (!this.selectedForecastUser) return
+      const token = localStorage.getItem("token")
+      this.forecastMessage = ''
+      try {
+        const res = await axios.get(`${API_BASE_URL}/api/progression/${this.selectedForecastUser}/`, {
           headers: { Authorization: `Bearer ${token}` }
         })
 
@@ -210,6 +251,7 @@ export default {
 
       } catch (err) {
         console.error(" Failed to fetch forecast:", err)
+        this.forecastMessage = 'Could not load the forecast for this patient.'
       }
     }
 
