@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_BASE_URL } from "./config";
+import { getToken, getRole, clearSession, loginPathFor } from "./auth";
 
 const api = axios.create({
   baseURL: `${API_BASE_URL}/api/`,
@@ -8,7 +9,7 @@ const api = axios.create({
 
 // Automatically attach JWT from localStorage
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -18,8 +19,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = "/login";
+      // "/login" does not exist as a route; go to the login page for this role.
+      const loginPath = loginPathFor(getRole());
+      clearSession();
+      window.location.href = loginPath;
     }
     return Promise.reject(error);
   }
