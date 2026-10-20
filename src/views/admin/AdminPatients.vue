@@ -77,20 +77,20 @@
 
           <form @submit.prevent="updateUser">
             <div class="mb-3">
-              <label class="block text-sm font-medium text-gray-600">Username</label>
-              <input v-model="editUser.username" type="text" class="w-full border px-3 py-2 rounded" />
+              <label for="edit-user-username" class="block text-sm font-medium text-gray-600">Username</label>
+              <input id="edit-user-username" v-model="editUser.username" type="text" class="w-full border px-3 py-2 rounded" />
             </div>
             <div class="mb-3">
-              <label class="block text-sm font-medium text-gray-600">Email</label>
-              <input v-model="editUser.email" type="email" class="w-full border px-3 py-2 rounded" />
+              <label for="edit-user-email" class="block text-sm font-medium text-gray-600">Email</label>
+              <input id="edit-user-email" v-model="editUser.email" type="email" class="w-full border px-3 py-2 rounded" />
             </div>
             <div class="mb-3">
-              <label class="block text-sm font-medium text-gray-600">Phone</label>
-              <input v-model="editUser.phone_number" type="text" class="w-full border px-3 py-2 rounded" />
+              <label for="edit-user-phone-number" class="block text-sm font-medium text-gray-600">Phone</label>
+              <input id="edit-user-phone-number" v-model="editUser.phone_number" type="text" class="w-full border px-3 py-2 rounded" />
             </div>
             <div class="mb-3">
-              <label class="block text-sm font-medium text-gray-600">New Password</label>
-              <input v-model="editUser.new_password" type="password" class="w-full border px-3 py-2 rounded" />
+              <label for="edit-user-new-password" class="block text-sm font-medium text-gray-600">New Password</label>
+              <input id="edit-user-new-password" autocomplete="new-password" v-model="editUser.new_password" type="password" class="w-full border px-3 py-2 rounded" />
             </div>
 
             <div class="flex justify-end gap-2 mt-4">
