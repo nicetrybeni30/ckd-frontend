@@ -35,6 +35,8 @@
   <script>
   import axios from 'axios'
   import { API_BASE_URL } from '@/config'
+  import { logApiError } from '@/utils/apiError'
+  import { setSession } from '@/auth'
   
   export default {
     data() {
@@ -82,7 +84,7 @@
             username: this.username,
             password: this.password
           })
-          localStorage.setItem('token', res.data.access)
+          setSession(res.data.access, 'patient')
   
           this.success = true
           setTimeout(() => {
@@ -90,7 +92,7 @@
           }, 1000)
   
         } catch (err) {
-          console.error(err)
+          logApiError('Request failed:', err)
   
           if (err.response?.status === 400) {
             this.error = 'Username or Email already exists.'

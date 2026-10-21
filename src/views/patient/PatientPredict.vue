@@ -60,6 +60,7 @@ import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { apiErrorMessage, logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar, BackButton },
@@ -84,8 +85,15 @@ export default {
         this.result = response.data
         this.showSuccessToast()
       } catch (error) {
-        console.error("Prediction failed:", error)
-        this.result = { prediction: 'No Record Found', recommendation: 'Please complete your health profile first.' }
+        logApiError("Prediction failed:", error)
+        const status = error.response?.status
+        if (status === 404) {
+          this.result = { prediction: 'No Record Found', recommendation: 'Please complete your health profile first.' }
+        } else if (status === 400) {
+          this.result = { prediction: 'Incomplete Record', recommendation: apiErrorMessage(error) }
+        } else {
+          this.result = { prediction: 'Unavailable', recommendation: apiErrorMessage(error, 'Prediction is unavailable right now. Please try again later.') }
+        }
       } finally {
         this.loading = false
       }

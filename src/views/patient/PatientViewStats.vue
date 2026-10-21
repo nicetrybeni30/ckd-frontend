@@ -72,6 +72,7 @@ import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar, BackButton },
@@ -134,7 +135,7 @@ export default {
         await this.fetchStats()
       }
     } catch (err) {
-      console.error("Error during mount:", err)
+      logApiError("Error during mount:", err)
     }
   },
   methods: {
@@ -154,7 +155,7 @@ export default {
       const token = localStorage.getItem('token')
       const url = this.isAdmin
         ? `${API_BASE_URL}/api/records/${this.selectedUser}/`
-        : `${API_BASE_URL}/api/records/me`
+        : `${API_BASE_URL}/api/records/me/`
 
       try {
         const res = await axios.get(url, {
@@ -163,7 +164,7 @@ export default {
         this.form = res.data
         this.originalForm = { ...res.data }
       } catch (err) {
-        console.error("Failed to fetch stats", err)
+        logApiError("Failed to fetch stats", err)
         this.$router.push('/patient/dashboard')
       }
     },
@@ -174,7 +175,7 @@ export default {
       const token = localStorage.getItem('token')
       try {
         const payload = {}
-        for (const [key, value] of Object.entries(this.originalForm)) {
+        for (const key of Object.keys(this.originalForm)) {
           if (!this.nonEditableFields.includes(key)) {
             payload[key] = this.form[key] !== '' ? this.form[key] : null
           }
@@ -208,7 +209,6 @@ export default {
           return
         }
 
-        console.log("Submitting payload:", payload)
         await axios.put(`${API_BASE_URL}/api/records/me/`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         })
@@ -220,7 +220,7 @@ export default {
         setTimeout(() => { this.showToast = false }, 2000)
 
       } catch (error) {
-        console.error("Update failed", error)
+        logApiError("Update failed", error)
         this.message = 'Something went wrong.'
         this.showConfirm = false
         this.showSuccessModal = true

@@ -6,18 +6,18 @@
 
       <form @submit.prevent="updateAccount" class="space-y-6">
         <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Username</label>
-          <input v-model="username" type="text" class="w-full border px-3 py-2 rounded" disabled  />
+          <label for="account-username" class="block mb-1 text-sm font-medium text-gray-700">Username</label>
+          <input id="account-username" v-model="username" type="text" class="w-full border px-3 py-2 rounded" disabled  />
         </div>
 
         <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Email</label>
-          <input v-model="email" type="email" class="w-full border px-3 py-2 rounded" disabled  />
+          <label for="account-email" class="block mb-1 text-sm font-medium text-gray-700">Email</label>
+          <input id="account-email" v-model="email" type="email" class="w-full border px-3 py-2 rounded" disabled  />
         </div>
 
         <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">New Password (Optional)</label>
-          <input v-model="newPassword" type="password" class="w-full border px-3 py-2 rounded" />
+          <label for="account-newPassword" class="block mb-1 text-sm font-medium text-gray-700">New Password (Optional)</label>
+          <input id="account-newPassword" autocomplete="new-password" v-model="newPassword" type="password" class="w-full border px-3 py-2 rounded" />
         </div>
 
         <div class="flex gap-4">
@@ -49,6 +49,7 @@ import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { apiErrorMessage, logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar, BackButton },
@@ -72,7 +73,7 @@ export default {
       this.username = res.data.username
       this.email = res.data.email
     } catch (error) {
-      console.error('Failed to load user info:', error)
+      logApiError('Failed to load user info:', error)
     }
   },
   methods: {
@@ -117,8 +118,8 @@ export default {
         this.showSuccessToast = true
         setTimeout(() => { this.showSuccessToast = false }, 3000)
       } catch (error) {
-        console.error('Update failed:', error)
-        this.message = 'Failed to update profile.'
+        logApiError('Update failed:', error)
+        this.message = apiErrorMessage(error, 'Failed to update profile.')
         this.messageType = 'error'
         this.showErrorToast = true
         setTimeout(() => { this.showErrorToast = false }, 3000)

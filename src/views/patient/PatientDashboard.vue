@@ -79,6 +79,7 @@
 import Navbar from '@/components/Navbar.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar },
@@ -99,17 +100,17 @@ export default {
 
       if (this.userInfo.role === 'patient') {
         try {
-          const recordRes = await axios.get(`${API_BASE_URL}/api/records/me`, {
+          const recordRes = await axios.get(`${API_BASE_URL}/api/records/me/`, {
             headers: { Authorization: `Bearer ${token}` }
           })
           this.patientData = recordRes.data
-        } catch (err) {
+        } catch {
           console.warn("No patient record found yet.")
           this.patientData = null
         }
       }
     } catch (error) {
-      console.error("Failed to load dashboard data:", error)
+      logApiError("Failed to load dashboard data:", error)
     }
 
     // Detect if coming from complete-profile

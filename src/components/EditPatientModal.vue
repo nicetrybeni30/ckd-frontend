@@ -24,6 +24,7 @@
   <script>
   import axios from 'axios'
   import { API_BASE_URL } from '@/config'
+  import { logApiError } from '@/utils/apiError'
   
   export default {
     props: {
@@ -48,7 +49,7 @@
           this.$emit('updated') // refresh parent after saving
           this.$emit('close')
         } catch (err) {
-          console.error('Failed to save changes', err)
+          logApiError('Failed to save changes', err)
         }
       }
     }

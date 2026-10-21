@@ -9,8 +9,8 @@
 
       <form @submit.prevent="createPatient" class="space-y-4 mt-6">
         <div>
-          <label class="block mb-1 text-gray-700 font-medium">Username</label>
-          <input
+          <label for="create-patient-username" class="block mb-1 text-gray-700 font-medium">Username</label>
+          <input id="create-patient-username"
             v-model="username"
             type="text"
             class="w-full p-2 border rounded"
@@ -20,8 +20,8 @@
         </div>
 
         <div>
-          <label class="block mb-1 text-gray-700 font-medium">Email</label>
-          <input
+          <label for="create-patient-email" class="block mb-1 text-gray-700 font-medium">Email</label>
+          <input id="create-patient-email"
             v-model="email"
             type="email"
             class="w-full p-2 border rounded"
@@ -31,8 +31,8 @@
         </div>
 
         <div>
-          <label class="block mb-1 text-gray-700 font-medium">Password</label>
-          <input
+          <label for="create-patient-password" class="block mb-1 text-gray-700 font-medium">Password</label>
+          <input id="create-patient-password" autocomplete="new-password"
             v-model="password"
             type="password"
             class="w-full p-2 border rounded"
@@ -70,6 +70,7 @@ import Navbar from '@/components/Navbar.vue'
 import BackButton from '@/components/BackButton.vue'
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { apiErrorMessage, logApiError } from '@/utils/apiError'
 
 export default {
   components: { Navbar, BackButton },
@@ -100,8 +101,8 @@ export default {
 
         this.showSuccess = true
       } catch (error) {
-        console.error(error)
-        this.errorMessage = 'Failed to create account. Try again.'
+        logApiError('Request failed:', error)
+        this.errorMessage = apiErrorMessage(error, 'Failed to create account. Try again.')
       }
     },
     finish() {

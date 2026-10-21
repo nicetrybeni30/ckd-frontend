@@ -4,8 +4,8 @@
       <h1 class="text-2xl font-bold mb-6 text-center">Admin Login</h1>
       <form @submit.prevent="login">
         <div class="mb-4">
-          <label class="block mb-1">Username</label>
-          <input
+          <label for="admin-login-username" class="block mb-1">Username</label>
+          <input id="admin-login-username" autocomplete="username"
             v-model="username"
             type="text"
             class="w-full p-2 border rounded"
@@ -14,8 +14,8 @@
           />
         </div>
         <div class="mb-6">
-          <label class="block mb-1">Password</label>
-          <input
+          <label for="admin-login-password" class="block mb-1">Password</label>
+          <input id="admin-login-password" autocomplete="current-password"
             v-model="password"
             type="password"
             class="w-full p-2 border rounded"
@@ -30,7 +30,7 @@
     </div>
 
     <!--  Error Modal -->
-    <div v-if="showError" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div v-if="showError" role="alertdialog" aria-modal="true" aria-live="assertive" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div class="bg-white p-6 rounded shadow text-center">
         <h2 class="text-xl font-bold text-red-600 mb-4"> Login Failed</h2>
         <p class="text-gray-700 mb-4">{{ errorMessage }}</p>
@@ -50,6 +50,8 @@
 <script>
 import axios from 'axios'
 import { API_BASE_URL } from '@/config'
+import { logApiError } from '@/utils/apiError'
+import { setSession, clearSession } from '@/auth'
 
 export default {
   name: "AdminLogin",
@@ -71,7 +73,16 @@ export default {
         })
 
         const token = response.data.access
-        localStorage.setItem('token', token)
+
+        // Only admin accounts may sign in here
+        const me = await axios.get(`${API_BASE_URL}/api/patient/me/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        if (me.data.role !== 'admin') {
+          clearSession()
+          throw new Error('unauthorized_role')
+        }
+        setSession(token, 'admin')
 
         this.showToast = true
 
@@ -80,10 +91,12 @@ export default {
           this.$router.push('/admin/dashboard')
         }, 2000)
       } catch (err) {
-        console.error(' Login failed:', err)
+        logApiError(' Login failed:', err)
         this.showError = true
-        if (err.response && err.response.status === 401) {
+        if (err.message === 'unauthorized_role' || (err.response && err.response.status === 401)) {
           this.errorMessage = 'Invalid username or password.'
+        } else if (err.response && err.response.status === 429) {
+          this.errorMessage = 'Too many login attempts. Please wait a minute and try again.'
         } else {
           this.errorMessage = 'An unexpected error occurred. Please try again.'
         }
